@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buffalo Collective: Get in Touch</title>
+  <meta name="description" content="Questions about Herds or retreats? Ready to reserve your spot? Reach out — Lindsay will be in touch personally.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Buffalo Collective: Get in Touch">
+  <meta property="og:description" content="Questions about Herds or retreats? Ready to reserve your spot? Reach out — Lindsay will be in touch personally.">
+  <meta property="og:url" content="https://buffalocollective.co/contact.html">
+  <meta property="og:image" content="https://buffalocollective.co/assets/images/logo/emerald-full-logo.png">
+  <link rel="canonical" href="https://buffalocollective.co/contact.html">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700;1,800;1,900&family=Zalando+Sans+Expanded:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Fathom - beautiful, simple website analytics -->
+  <script src="https://cdn.usefathom.com/script.js" data-site="MMWWTZFU" defer></script>
+  <!-- / Fathom -->
+</head>
+<body class="contact">
+
+  <div id="reading-indicator"></div>
+
+  <nav class="site-nav" id="site-nav">
+    <a href="index.html" class="nav-logo">
+      <img src="assets/images/logo/white-full-logo.png" alt="Buffalo Collective" width="160" loading="eager">
+    </a>
+    <ul class="nav-links" role="list" id="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="herds.html">Herds</a></li>
+      <li><a href="retreats.html">Retreats</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="#footer-subscribe" class="btn btn-primary">Subscribe</a></li>
+    </ul>
+    <button class="nav-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <main>
+
+    <!-- ============================================================
+         SECTION 1 — Hero
+         Background: texture-stripes, anchored low
+         ============================================================ -->
+    <section class="section texture-section no-shadow" style="min-height: 100vh; padding-top: clamp(140px, 16vh, 220px); padding-bottom: clamp(60px, 10vh, 140px); display: flex; flex-direction: column; justify-content: flex-end;">
+      <div class="texture-bg" data-flip-y="true" style="background-image: url('assets/images/textures/texture-stripes.jpg');"></div>
+
+      <div class="container">
+        <h1 class="t-display hero-rise" style="color: var(--brown);">
+          You found us.
+        </h1>
+        <p class="t-italic reveal-scale" style="margin-top: 0.5rem; color: var(--brown);">
+          Let&rsquo;s talk.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 2 — Contact form
+         Background: sand
+         ============================================================ -->
+    <section class="section bg-sand">
+      <div class="container">
+        <div class="bc-form-wrap reveal">
+          <form class="bc-form bc-form--light" id="form-contact" novalidate>
+
+            <div class="bc-form-row bc-form-row--2col">
+              <div class="bc-field">
+                <label class="bc-label" for="ct-firstname">First name</label>
+                <input class="bc-input" type="text" id="ct-firstname" name="firstName" autocomplete="given-name" required />
+              </div>
+              <div class="bc-field">
+                <label class="bc-label" for="ct-lastname">Last name</label>
+                <input class="bc-input" type="text" id="ct-lastname" name="lastName" autocomplete="family-name" required />
+              </div>
+            </div>
+
+            <div class="bc-field">
+              <label class="bc-label" for="ct-email">Email address</label>
+              <input class="bc-input" type="email" id="ct-email" name="email" autocomplete="email" required />
+            </div>
+
+            <div class="bc-field">
+              <label class="bc-label" for="ct-inquiry">What brings you here?</label>
+              <div class="bc-select-wrap">
+                <select class="bc-input bc-select" id="ct-inquiry" name="inquiryType" required>
+                  <option value="" disabled selected>Select one</option>
+                  <option value="Reserve my spot — July 13–17 (Women &amp; femme leaders)">Reserve my spot — July 13–17 (Women &amp; femme leaders)</option>
+                  <option value="Reserve my spot — September 9–13 (Purpose-driven professionals)">Reserve my spot — September 9–13 (Purpose-driven professionals)</option>
+                  <option value="Reserve my spot — November 6–10 (Care professionals)">Reserve my spot — November 6–10 (Care professionals)</option>
+                  <option value="I want to know more about Herds">I want to know more about Herds</option>
+                  <option value="Press &amp; partnerships">Press &amp; partnerships</option>
+                  <option value="Something else">Something else</option>
+                </select>
+                <span class="bc-select-arrow" aria-hidden="true">↓</span>
+              </div>
+            </div>
+
+            <div class="bc-field">
+              <label class="bc-label" for="ct-message">Message</label>
+              <textarea class="bc-input bc-textarea" id="ct-message" name="message" rows="5" required></textarea>
+            </div>
+
+            <div class="bc-field">
+              <label class="bc-label" for="ct-source">How did you hear about us?</label>
+              <div class="bc-select-wrap">
+                <select class="bc-input bc-select" id="ct-source" name="source" required>
+                  <option value="" disabled selected>Select one</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="Substack">Substack</option>
+                  <option value="Personal Referral">Personal Referral</option>
+                  <option value="Conference/Event">Conference/Event</option>
+                  <option value="Other">Other</option>
+                </select>
+                <span class="bc-select-arrow" aria-hidden="true">↓</span>
+              </div>
+            </div>
+
+            <div class="bc-field bc-field--checkbox">
+              <label class="bc-checkbox-label">
+                <input class="bc-checkbox" type="checkbox" id="ct-newsletter" name="subscribeNewsletter" checked />
+                <span class="bc-checkbox-custom" aria-hidden="true"></span>
+                <span class="bc-checkbox-text">Subscribe to Herd Mentality, our newsletter for integrated leaders</span>
+              </label>
+            </div>
+
+            <div class="bc-form-footer">
+              <button class="bc-btn bc-btn--primary" type="submit">Send it</button>
+            </div>
+
+            <div class="bc-form-message bc-form-message--success" id="ct-success" aria-live="polite" hidden>
+              Got it. Lindsay will be in touch soon.
+            </div>
+            <div class="bc-form-message bc-form-message--error" id="ct-error" aria-live="polite" hidden></div>
+          </form>
+        </div>
+
+        <p class="reveal" style="margin-top: 2rem; text-align: center; color: var(--brown); font-size: 14px; font-style: italic;">
+          Buffalo Collective will never share or sell your personal information.
+        </p>
+      </div>
+
+      <script>
+        (function () {
+          const form = document.getElementById("form-contact");
+          if (!form) return;
+          const successMsg = document.getElementById("ct-success");
+          const errorMsg = document.getElementById("ct-error");
+          form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const btn = form.querySelector("button[type=submit]");
+            btn.disabled = true;
+            btn.textContent = "Sending…";
+            successMsg.hidden = true;
+            errorMsg.hidden = true;
+            const data = {
+              firstName: form.firstName.value.trim(),
+              lastName: form.lastName.value.trim(),
+              email: form.email.value.trim(),
+              inquiryType: form.inquiryType.value,
+              message: form.message.value.trim(),
+              source: form.source.value,
+              subscribeNewsletter: form.subscribeNewsletter.checked,
+            };
+            try {
+              const res = await fetch("/.netlify/functions/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              });
+              const json = await res.json();
+              if (res.ok && json.success) {
+                form.reset();
+                form.hidden = true;
+                successMsg.hidden = false;
+              } else {
+                errorMsg.textContent = json.error || "Something went wrong. Please try again.";
+                errorMsg.hidden = false;
+                btn.disabled = false;
+                btn.textContent = "Send it";
+              }
+            } catch {
+              errorMsg.textContent = "Something went wrong. Please try again.";
+              errorMsg.hidden = false;
+              btn.disabled = false;
+              btn.textContent = "Send it";
+            }
+          });
+        })();
+      </script>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       Footer
+       ============================================================ -->
+  <footer class="site-footer">
+    <div class="footer-logo">
+      <img src="assets/images/logo/light-full-logo.png" alt="Buffalo Collective" loading="lazy">
+    </div>
+
+    <div id="footer-subscribe" class="footer-subscribe">
+      <p class="footer-subscribe-intro">
+        No pep talks. No frameworks. Just honest writing about connection, conditioning, and what it actually takes to build a life that fits the person you&rsquo;re becoming.
+      </p>
+      <div class="bc-form-wrap">
+        <form class="bc-form" id="form-newsletter" novalidate>
+          <div class="bc-form-row bc-form-row--2col">
+            <div class="bc-field">
+              <label class="bc-label" for="nl-firstname">First name</label>
+              <input class="bc-input" type="text" id="nl-firstname" name="firstName" autocomplete="given-name" required />
+            </div>
+            <div class="bc-field">
+              <label class="bc-label" for="nl-email">Email address</label>
+              <input class="bc-input" type="email" id="nl-email" name="email" autocomplete="email" required />
+            </div>
+          </div>
+
+          <div class="bc-form-footer">
+            <button class="bc-btn bc-btn--primary" type="submit">Subscribe to Herd Mentality</button>
+          </div>
+
+          <div class="bc-form-message bc-form-message--success" id="nl-success" aria-live="polite" hidden>
+            You&rsquo;re in the Herd. 🦬
+          </div>
+          <div class="bc-form-message bc-form-message--error" id="nl-error" aria-live="polite" hidden></div>
+        </form>
+      </div>
+      <script>
+        (function () {
+          const form = document.getElementById("form-newsletter");
+          if (!form) return;
+          const successMsg = document.getElementById("nl-success");
+          const errorMsg = document.getElementById("nl-error");
+          form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const btn = form.querySelector("button[type=submit]");
+            btn.disabled = true;
+            btn.textContent = "Sending…";
+            successMsg.hidden = true;
+            errorMsg.hidden = true;
+            const data = {
+              firstName: form.firstName.value.trim(),
+              email: form.email.value.trim(),
+            };
+            try {
+              const res = await fetch("/.netlify/functions/subscribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              });
+              const json = await res.json();
+              if (res.ok && json.success) {
+                form.reset();
+                form.hidden = true;
+                successMsg.hidden = false;
+              } else {
+                errorMsg.textContent = json.error || "Something went wrong. Please try again.";
+                errorMsg.hidden = false;
+                btn.disabled = false;
+                btn.textContent = "Subscribe to Herd Mentality";
+              }
+            } catch {
+              errorMsg.textContent = "Something went wrong. Please try again.";
+              errorMsg.hidden = false;
+              btn.disabled = false;
+              btn.textContent = "Subscribe to Herd Mentality";
+            }
+          });
+        })();
+      </script>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer">
+      <a href="about.html">About</a>
+      <a href="herds.html">Herds</a>
+      <a href="retreats.html">Retreats</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+
+    <p class="footer-disclaimer">
+      The information provided on this website does not, and is not intended to, constitute legal or medical advice. All information, content, and materials available on this site are for general educational and informational purposes only.
+    </p>
+
+    <p class="footer-copyright">© 2026 Buffalo Collective LLC</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

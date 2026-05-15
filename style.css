@@ -1,0 +1,1642 @@
+/* =====================================================================
+   Buffalo Collective — site stylesheet
+   Sections:
+     1. Tokens (custom properties)
+     2. Reset + base
+     3. Typography utilities
+     4. Layout: sections, backgrounds, content widths
+     5. Buttons
+     6. Navigation
+     7. Reading indicator
+     8. Hero: logo intro + scroll-snap quotes
+     9. Texture parallax
+    10. Animation utilities (reveal, highlight, buffalo, stars, ticker)
+    11. Component patterns (cards, lists, panels, ticker, retreat gallery)
+    12. Footer
+    13. Forms (from bc-forms.css)
+    14. Page-specific (terms / privacy)
+    15. Responsive
+    16. prefers-reduced-motion
+   ===================================================================== */
+
+
+/* 1. Tokens =========================================================== */
+:root {
+  /* Brand */
+  --green:      #16462b;
+  --orange:     #f47621;
+  --brown:      #372c1c;
+  --sand:       #e2d5b3;
+  --offwhite:   #f2f2f2;
+  --teal:       #69c8c6;
+  --teal-mid:   #3c918d;
+  --rust:       #925924;
+  --pink:       #ec4d5f;
+
+  /* Spacing */
+  --section-padding: clamp(80px, 10vw, 140px);
+  --content-max:     780px;
+  --page-margin:     clamp(24px, 6vw, 120px);
+
+  /* Type scale */
+  --sz-display:   clamp(52px, 9vw, 88px);
+  --sz-headline:  clamp(36px, 5vw, 60px);
+  --sz-subhead:   clamp(24px, 3.5vw, 40px);
+  --sz-pullquote: clamp(22px, 3vw, 36px);
+  --sz-body:      19.6px;
+  --sz-label:     11px;
+
+  /* Form tokens (used by bc-form blocks) */
+  --form-font:    "Zalando Sans Expanded", "DM Sans", sans-serif;
+  --input-radius: 8px;
+  --btn-radius:   100px;
+}
+
+
+/* 2. Reset + base ===================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--green);
+  color: var(--offwhite);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Page-level scroll-snap, but only elements with scroll-snap-align
+   participate (just the .snap-slide quote slides). */
+html { scroll-snap-type: y proximity; }
+
+body {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 300;
+  font-size: var(--sz-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: inherit; }
+
+button { font: inherit; }
+
+ul { padding: 0; margin: 0; list-style: none; }
+
+h1, h2, h3, h4, h5, h6, p { margin: 0; }
+
+::selection { background: var(--orange); color: #fff; }
+
+strong, b { font-weight: 600; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* 3. Typography utilities ============================================= */
+.serif {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+}
+.sans {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+}
+
+.t-display   { font-family: "Playfair Display", serif; font-optical-sizing: auto; font-weight: 900; font-size: var(--sz-display);   line-height: 1.04; letter-spacing: -0.01em; }
+.t-headline  { font-family: "Playfair Display", serif; font-optical-sizing: auto; font-weight: 900; font-size: var(--sz-headline);  line-height: 1.1;  letter-spacing: -0.005em; }
+.t-section   { font-family: "Playfair Display", serif; font-optical-sizing: auto; font-weight: 800; font-size: var(--sz-headline);  line-height: 1.15; }
+.t-subhead   { font-family: "Playfair Display", serif; font-optical-sizing: auto; font-weight: 800; font-size: var(--sz-subhead);   line-height: 1.2;  }
+.t-italic    { font-family: "Playfair Display", serif; font-optical-sizing: auto; font-weight: 700; font-style: italic; font-size: var(--sz-subhead); line-height: 1.25; }
+.t-pullquote { font-family: "Playfair Display", serif; font-optical-sizing: auto; font-weight: 700; font-style: italic; font-size: var(--sz-pullquote); line-height: 1.3; }
+.t-body      { font-family: "Zalando Sans Expanded", "DM Sans", sans-serif; font-weight: 300; font-size: var(--sz-body); line-height: 1.7; }
+.t-body-md   { font-family: "Zalando Sans Expanded", "DM Sans", sans-serif; font-weight: 400; font-size: var(--sz-body); line-height: 1.7; }
+.t-label     {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: var(--sz-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.t-attribution {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: var(--sz-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 1.25em;
+}
+
+/* Color helpers used in inline-styled paragraphs */
+.c-green    { color: var(--green); }
+.c-orange   { color: var(--orange); }
+.c-brown    { color: var(--brown); }
+.c-sand     { color: var(--sand); }
+.c-offwhite { color: var(--offwhite); }
+.c-teal     { color: var(--teal); }
+.c-teal-mid { color: var(--teal-mid); }
+.c-rust     { color: var(--rust); }
+.c-pink     { color: var(--pink); }
+.c-white    { color: #fff; }
+
+
+/* 4. Layout: sections + backgrounds =================================== */
+.section {
+  padding: var(--section-padding) var(--page-margin);
+  position: relative;
+}
+.section--tight { padding-top: clamp(56px, 6vw, 96px); padding-bottom: clamp(56px, 6vw, 96px); }
+.section--full  { min-height: 100vh; display: flex; align-items: center; }
+
+.container {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  position: relative;
+  z-index: 2;
+}
+.container--wide { max-width: 1100px; }
+
+/* Background variants */
+.bg-green    { background: var(--green);    color: var(--offwhite); }
+.bg-green    h2, .bg-green h3, .bg-green h4 { color: var(--offwhite); }
+.bg-green    .t-body, .bg-green p { color: rgba(242,242,242,0.85); }
+
+.bg-sand     { background: var(--sand);     color: var(--brown); }
+.bg-sand     h2, .bg-sand h3, .bg-sand h4 { color: var(--green); }
+.bg-sand     p { color: var(--brown); }
+
+.bg-offwhite { background: var(--offwhite); color: var(--brown); }
+.bg-offwhite h2, .bg-offwhite h3, .bg-offwhite h4 { color: var(--green); }
+.bg-offwhite p { color: var(--brown); }
+
+.bg-orange   { background: var(--orange);   color: #fff; }
+.bg-orange   h2, .bg-orange h3, .bg-orange h4 { color: #fff; }
+.bg-orange   p { color: rgba(255,255,255,0.92); }
+
+.bg-pink     { background: var(--pink);     color: #fff; }
+.bg-pink     h2, .bg-pink h3, .bg-pink h4 { color: #fff; }
+.bg-pink     p { color: rgba(255,255,255,0.92); }
+
+.bg-brown    { background: var(--brown);    color: var(--sand); }
+.bg-brown    h2, .bg-brown h3, .bg-brown h4 { color: var(--sand); }
+.bg-brown    p { color: rgba(226,213,179,0.7); }
+
+/* Vertical rhythm between stacked text blocks */
+.flow > * + * { margin-top: 1.35em; }
+.flow-lg > * + * { margin-top: 1.8em; }
+.flow-sm > * + * { margin-top: 0.85em; }
+
+.cta-row {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.cta-row--centered { justify-content: center; }
+
+
+/* 5. Buttons ========================================================== */
+.btn {
+  display: inline-block;
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 15px 32px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  transition: opacity 200ms ease, transform 200ms ease, background 200ms ease, color 200ms ease;
+  white-space: nowrap;
+}
+.btn:hover  { opacity: 0.92; }
+.btn:active { transform: scale(0.985); }
+
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-ghost   { background: transparent; color: var(--offwhite); border: 1.5px solid rgba(242,242,242,0.45); }
+.btn-dark    { background: var(--green); color: var(--offwhite); }
+.btn-sand    { background: var(--sand); color: var(--green); }
+
+/* Ghost variant on light backgrounds (used on retreats "not sure?" CTA) */
+.btn-ghost.btn--on-light {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+
+/* 6. Navigation ======================================================= */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px var(--page-margin);
+  background: transparent;
+  transition: background 250ms ease, box-shadow 250ms ease, padding 250ms ease;
+}
+.site-nav.is-scrolled {
+  background: var(--green);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* Non-home pages: nav is always solid green (no logo-intro hero
+   to sit transparent over). */
+body:not(.home) .site-nav {
+  background: var(--green);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.nav-logo img {
+  width: 130px;
+  height: auto;
+  display: block;
+}
+
+/* Home page: nav logo starts hidden until intro completes */
+.home .nav-logo { opacity: 0; pointer-events: none; transform: translateY(-8px); }
+.home.intro-done .nav-logo { opacity: 1; pointer-events: auto; transform: none; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.nav-links a {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+.nav-links a:hover { opacity: 0.75; }
+.nav-links a.is-active { border-bottom: 1.5px solid var(--orange); padding-bottom: 4px; }
+.nav-links .btn { padding: 11px 22px; font-size: 11px; }
+
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+.nav-toggle span {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: var(--offwhite);
+  border-radius: 2px;
+  transition: transform 250ms ease, opacity 200ms ease, top 250ms ease;
+}
+.nav-toggle span:nth-child(1) { top: 13px; }
+.nav-toggle span:nth-child(2) { top: 19px; }
+.nav-toggle span:nth-child(3) { top: 25px; }
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { top: 19px; transform: rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { top: 19px; transform: rotate(-45deg); }
+
+
+/* 7. Reading indicator ================================================ */
+#reading-indicator {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--orange);
+  z-index: 9999;
+  transition: width 100ms linear;
+  pointer-events: none;
+}
+
+
+/* 8. Hero: logo intro + scroll-snap quotes ============================ */
+.hero-intro {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--page-margin);
+  overflow: hidden;
+}
+.hero-intro__inner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+.hero-intro__logo {
+  width: clamp(644px, 88vw, 936px);
+  margin: 0 auto;
+  display: block;
+}
+.hero-intro__tagline {
+  margin-top: 1.5rem;
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--sand);
+  font-size: clamp(29px, 3.4vw, 39px);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.hero-intro.is-leaving .hero-intro__tagline {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.hero-intro.is-leaving .hero-intro__logo {
+  transform: scale(0.42) translateY(-30vh);
+  opacity: 0;
+  transition: transform 500ms ease, opacity 500ms ease 100ms;
+}
+
+/* Small bouncing star at bottom — scroll affordance, no copy. */
+.hero-intro__cue {
+  position: absolute;
+  bottom: clamp(36px, 5vh, 72px);
+  left: 50%;
+  width: clamp(26px, 2.5vw, 36px);
+  height: clamp(26px, 2.5vw, 36px);
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: heroCueBounce 1.8s ease-in-out infinite;
+  transition: opacity 300ms ease;
+}
+.hero-intro__cue img { width: 100%; height: 100%; display: block; }
+.hero-intro.is-leaving .hero-intro__cue { opacity: 0; }
+@keyframes heroCueBounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, 14px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-intro__cue { animation: none; }
+}
+
+/* Snap-container is just a wrapper — page-level snap on html drives it,
+   so slides flow in normal page scroll and scroll-up works naturally. */
+.snap-container {
+  /* No inner scroll/snap; slides participate in page scroll-snap. */
+}
+.snap-slide {
+  height: 90vh;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--page-margin);
+  padding-bottom: clamp(60px, 12vh, 160px);
+  text-align: center;
+}
+.snap-slide__quote {
+  max-width: 16ch;
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-size: var(--sz-display);
+  line-height: 1.05;
+  opacity: 0;
+  /* Off-screen entrances. Longer durations so motion stays smooth.
+     Delay = slide snaps first, then the quote travels in. */
+  transition:
+    opacity 700ms ease 450ms,
+    transform 1400ms cubic-bezier(0.22, 1, 0.36, 1) 450ms;
+}
+.snap-slide__quote--italic { font-style: italic; font-weight: 900; }
+
+/* Vertical star indicator for the three snap-quote slides.
+   Visible only while the snap-container is in viewport. */
+.snap-nav {
+  position: fixed;
+  top: 50%;
+  right: clamp(20px, 3vw, 48px);
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 350ms ease;
+}
+.snap-nav.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.snap-nav__dot {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+.snap-nav__dot img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.snap-nav__dot:hover { opacity: 0.7; transform: scale(1.1); }
+.snap-nav__dot.is-active {
+  opacity: 1;
+  transform: scale(1.4);
+}
+@media (max-width: 540px) {
+  .snap-nav { display: none; }
+}
+
+/* Each quote enters from off-screen in a different direction.
+   Slide 1 drops a full viewport down (from above), 2 from the left
+   edge, 3 from the right edge. */
+.snap-slide:nth-child(1) .snap-slide__quote {
+  transform: translateY(-100vh);
+  transition:
+    opacity 800ms ease 300ms,
+    transform 1500ms cubic-bezier(0.22, 1, 0.36, 1) 300ms;
+}
+.snap-slide:nth-child(2) .snap-slide__quote { transform: translateX(-100vw); }
+.snap-slide:nth-child(3) .snap-slide__quote { transform: translateX(100vw); }
+.snap-slide.is-visible .snap-slide__quote {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* 9. Texture parallax ================================================= */
+.texture-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.texture-bg {
+  position: absolute;
+  inset: -30%;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+  z-index: 0;
+}
+/* Stack content on top of the texture-bg layer.
+   Exclude .texture-bg itself — it needs its own absolute positioning. */
+.texture-section > *:not(.texture-bg) { position: relative; z-index: 2; }
+
+/* Default text color over textures — set on the section so children inherit.
+   Specific color helpers (.c-orange, .c-teal, etc.) on any descendant still
+   win over inheritance, so quote colors etc. apply correctly. */
+.texture-section { color: var(--offwhite); }
+
+/* Subtle text-shadow lift on headings and large display text. */
+.texture-section h1,
+.texture-section h2,
+.texture-section h3,
+.texture-section h4,
+.texture-section .t-display,
+.texture-section .t-headline,
+.texture-section .t-section,
+.texture-section .t-subhead,
+.texture-section .t-italic,
+.texture-section .snap-slide__quote,
+.texture-section .hero-intro__tagline {
+  text-shadow: 0 2px 14px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.25);
+}
+
+/* Body copy over textures gets extra help — heavier weight, warmer color,
+   tighter shadow, and a constrained measure for easier scanning. */
+.texture-section .t-body {
+  font-weight: 400;
+  color: var(--sand);
+  max-width: min(52ch, 100%);
+  text-shadow:
+    0 2px 8px rgba(0,0,0,0.65),
+    0 0 2px rgba(0,0,0,0.9);
+}
+
+
+/* 10. Animation utilities ============================================= */
+
+/* Scroll reveal — directional variants */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 700ms ease,
+    transform 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+.reveal-left,
+.reveal-right,
+.reveal-scale {
+  opacity: 0;
+  transition:
+    opacity 700ms ease,
+    transform 850ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal-left   { transform: translateX(-60px); }
+.reveal-right  { transform: translateX(60px); }
+.reveal-scale  { transform: scale(0.86); }
+.reveal-left.is-visible,
+.reveal-right.is-visible,
+.reveal-scale.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* About hero — three statements fly in on page load, each from a
+   different direction. Subtle version of the home snap-quote pattern. */
+@keyframes about-quote-from-top {
+  from { opacity: 0; transform: translateY(-60px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes about-quote-from-left {
+  from { opacity: 0; transform: translateX(-80px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes about-quote-from-right {
+  from { opacity: 0; transform: translateX(80px); }
+  to   { opacity: 1; transform: none; }
+}
+.about-quote { opacity: 0; }
+.about-quote--1 { animation: about-quote-from-top   800ms cubic-bezier(0.22, 1, 0.36, 1) 250ms forwards; }
+.about-quote--2 { animation: about-quote-from-left  800ms cubic-bezier(0.22, 1, 0.36, 1) 550ms forwards; }
+.about-quote--3 { animation: about-quote-from-right 800ms cubic-bezier(0.22, 1, 0.36, 1) 850ms forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .about-quote { opacity: 1; animation: none; }
+}
+
+/* Page-load rise — element starts off-screen below and rises into
+   place after a short delay. Independent of IntersectionObserver:
+   plays once on load, doesn't reverse on scroll. */
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(130px); }
+  to   { opacity: 1; transform: none; }
+}
+.hero-rise {
+  opacity: 0;
+  animation: hero-rise 1200ms cubic-bezier(0.22, 1, 0.36, 1) 350ms forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise { animation: none; opacity: 1; }
+}
+
+/* Strong-emphasis reveal — bigger scale gap, longer travel,
+   slower curve. For statement moments like the orange testimonial. */
+.reveal-emphasis {
+  opacity: 0;
+  transform: scale(0.55) translateY(50px);
+  transition:
+    opacity 1100ms ease,
+    transform 1500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-emphasis.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 600ms ease, transform 600ms ease; }
+.reveal-stagger.is-visible > *           { opacity: 1; transform: none; }
+.reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 120ms; }
+.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 240ms; }
+.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 360ms; }
+.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 480ms; }
+.reveal-stagger.is-visible > *:nth-child(6) { transition-delay: 600ms; }
+.reveal-stagger.is-visible > *:nth-child(7) { transition-delay: 720ms; }
+.reveal-stagger.is-visible > *:nth-child(8) { transition-delay: 840ms; }
+
+/* Highlight sweep — scroll-driven via JS:
+   JS writes inline background-size as the element scrolls through the
+   viewport. With box-decoration-break: slice (default), the gradient is
+   laid out across the inline element's total linear extent, then sliced
+   into the actual line layout — so the orange fills line 1, then line 2,
+   then line 3 in sequence as the reader scrolls. */
+.highlight-reveal {
+  background: linear-gradient(var(--orange), var(--orange)) no-repeat left center;
+  background-size: 0% 38%;
+  background-position: 0 70%;
+  padding: 0 6px;
+  display: inline;
+}
+/* Pink variant for highlights placed over textures, etc. */
+.highlight-reveal--pink {
+  background-image: linear-gradient(var(--pink), var(--pink));
+}
+.highlight-reveal--teal {
+  background-image: linear-gradient(var(--teal), var(--teal));
+}
+
+/* Utility to drop the text-shadow added globally to texture-section text. */
+.no-shadow,
+.no-shadow * { text-shadow: none !important; }
+
+/* Buffalo entrance */
+.buffalo-animate {
+  opacity: 0;
+  transition: opacity 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+}
+.buffalo-animate--left   { transform: translateX(-120px); }
+.buffalo-animate--right  { transform: translateX(120px); }
+.buffalo-animate--bottom { transform: translateY(80px); }
+.buffalo-animate.is-visible { opacity: 1; transform: translate(0,0); }
+
+.buffalo {
+  position: relative;
+  display: block;
+  margin: 2rem auto 0;
+  max-width: min(560px, 78vw);
+  pointer-events: none;
+}
+.buffalo--large { max-width: min(720px, 85vw); }
+
+/* Horizontal mirror for buffalo images that face the wrong way.
+   Combines with buffalo-animate--{direction} so the slide-in transform
+   and the flip don't fight each other. */
+.buffalo--flip:not(.buffalo-animate) { transform: scaleX(-1); }
+.buffalo--flip.buffalo-animate--right             { transform: translateX(120px) scaleX(-1); }
+.buffalo--flip.buffalo-animate--right.is-visible  { transform: translateX(0)     scaleX(-1); }
+.buffalo--flip.buffalo-animate--left              { transform: translateX(-120px) scaleX(-1); }
+.buffalo--flip.buffalo-animate--left.is-visible   { transform: translateX(0)      scaleX(-1); }
+.buffalo--flip.buffalo-animate--bottom            { transform: translateY(80px) scaleX(-1); }
+.buffalo--flip.buffalo-animate--bottom.is-visible { transform: translateY(0)    scaleX(-1); }
+
+/* Scattered stars */
+.star-scatter {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+.star-scatter img {
+  position: absolute;
+  opacity: 0;
+  transform: translateY(22px) scale(0.55);
+  transition:
+    opacity 500ms ease,
+    transform 700ms cubic-bezier(0.34, 1.5, 0.5, 1);
+}
+.star-scatter img.is-visible {
+  opacity: 1;
+  transform: translate(0,0) scale(1);
+}
+
+/* Team grid pulsing stars (About > Partners in Practice) */
+@keyframes star-pulse {
+  0%, 100% { transform: scale(1)    rotate(0deg); }
+  50%      { transform: scale(1.12) rotate(180deg); }
+}
+.team-star {
+  position: absolute;
+  animation: star-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Ticker */
+.ticker {
+  overflow: hidden;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+.ticker-track {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  animation: ticker 30s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--green);
+  text-decoration: none;
+  padding: 0 0.5rem;
+  transition: color 200ms ease;
+}
+.ticker-item:hover { color: var(--orange); }
+.ticker-headshot {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(146,89,36,0.25);
+  display: block;
+}
+@media (max-width: 900px) {
+  .ticker-headshot { width: 140px; height: 140px; }
+}
+.ticker-sep { width: 16px; height: 16px; flex-shrink: 0; align-self: center; }
+
+/* Pink-background overrides for the Partners in Energy ticker. */
+.bg-pink .ticker-item       { color: #fff; }
+.bg-pink .ticker-item:hover { color: var(--sand); }
+.bg-pink .ticker-headshot   { border-color: rgba(255,255,255,0.45); }
+
+
+/* 11. Component patterns ============================================== */
+
+/* Animated star bullets — real star PNGs as ::before, slow pulse+spin
+   with staggered delays so they feel organic.
+   Use .star-list--anim--light for light backgrounds (dkteal stars). */
+.star-list--anim {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+.star-list--anim li {
+  position: relative;
+  padding-left: 2.5em;
+  line-height: 1.6;
+}
+.star-list--anim li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  width: 1.3em;
+  height: 1.3em;
+  background-image: url('assets/stars/star-05-orange.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: star-bullet-pulse 4s ease-in-out infinite;
+  transform-origin: center;
+}
+.star-list--anim--light li::before {
+  background-image: url('assets/stars/star-05-dkteal.png');
+}
+.star-list--anim li:nth-child(1)::before { animation-delay: 0s; }
+.star-list--anim li:nth-child(2)::before { animation-delay: 0.5s; }
+.star-list--anim li:nth-child(3)::before { animation-delay: 1s; }
+.star-list--anim li:nth-child(4)::before { animation-delay: 1.5s; }
+.star-list--anim li:nth-child(5)::before { animation-delay: 2s; }
+.star-list--anim li:nth-child(6)::before { animation-delay: 2.5s; }
+.star-list--anim li:nth-child(7)::before { animation-delay: 3s; }
+@keyframes star-bullet-pulse {
+  0%, 100% { transform: scale(1)    rotate(0deg);   opacity: 0.85; }
+  50%      { transform: scale(1.15) rotate(180deg); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star-list--anim li::before { animation: none; opacity: 1; }
+}
+
+/* Custom star-glyph list (herds cost checklist) */
+.star-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+.star-list li {
+  position: relative;
+  padding-left: 1.8em;
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 400;
+  line-height: 1.55;
+}
+.star-list li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  color: var(--orange);
+  font-size: 1.05em;
+}
+
+/* Plain bullet list with brand styling */
+.bc-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+.bc-list li {
+  position: relative;
+  padding-left: 1.2em;
+  line-height: 1.5;
+}
+.bc-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--orange);
+}
+
+/* Side-by-side body + buffalo row (home Section 5 — Buffalo philosophy) */
+.buffalo-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  margin-top: 3rem;
+}
+.buffalo-split__buffalo .buffalo {
+  margin: 0;
+  max-width: min(560px, 100%);
+}
+@media (max-width: 768px) {
+  .buffalo-split { grid-template-columns: 1fr; gap: 1.5rem; }
+  /* On mobile, flatten the .flow wrapper inside buffalo-split so its
+     children become direct grid items, then push any h3 (the "Wisdom
+     and strength…" statement) to load AFTER the buffalo. */
+  .buffalo-split > .flow { display: contents; }
+  .buffalo-split > .flow > * { order: 1; }
+  .buffalo-split__buffalo { order: 2; }
+  .buffalo-split > .flow > h3 { order: 3; }
+}
+
+/* Asymmetric intro split — text 1/3, buffalo 2/3 (home Section 1c) */
+.intro-split {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  margin-top: 2rem;
+}
+.intro-split__buffalo .buffalo {
+  margin: 0;
+  max-width: min(560px, 100%);
+}
+.intro-followup {
+  margin-top: clamp(2rem, 5vw, 4rem);
+}
+@media (max-width: 768px) {
+  .intro-split { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+
+/* Two-column block (home offering, is/is-not) */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: stretch;
+}
+.two-col__block {
+  display: flex;
+  flex-direction: column;
+}
+.two-col__block h3 { margin-bottom: 0.75rem; }
+/* Push CTA row to the bottom of the block so CTAs across columns line up */
+.two-col__block .cta-row { margin-top: auto; padding-top: 2rem; }
+
+/* Schedule timeline (retreats) */
+.schedule {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+.schedule-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(55,44,28,0.18);
+}
+.schedule-row:last-child { border-bottom: none; }
+.schedule-day {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--green);
+}
+.schedule-desc { color: var(--brown); }
+
+/* Experience panels (before / at / after) */
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+.panel {
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(55,44,28,0.12);
+  border-radius: 16px;
+  padding: 1.75rem;
+}
+.panel h3 {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--green);
+  margin-bottom: 0.75rem;
+}
+.panel p { color: var(--brown); font-weight: 300; line-height: 1.7; }
+
+/* Pricing block */
+.pricing {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 0.6rem;
+}
+.pricing__price {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-size: var(--sz-display);
+  line-height: 1;
+  color: var(--orange);
+}
+.pricing__price--alt {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: var(--sz-subhead);
+  color: var(--sand);
+}
+.pricing__caption {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(242,242,242,0.85);
+}
+.pricing__refund {
+  margin-top: 1.5rem;
+  font-size: 14px;
+  color: var(--sand);
+  font-weight: 300;
+  max-width: 60ch;
+}
+
+/* Retreat cards horizontal gallery — equal heights via stretch; each
+   card's theme window is the same FIXED size, so CTAs line up across
+   all cards regardless of content length. Texture lives on the section. */
+.retreat-gallery {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 1rem 0 2rem;
+  margin-top: 2.5rem;
+  -webkit-overflow-scrolling: touch;
+  align-items: stretch;
+}
+.retreat-card {
+  background: #fff;
+  border: 1px solid rgba(55,44,28,0.12);
+  border-radius: 16px;
+  padding: 2rem;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 0 0 340px;
+  width: 340px;
+  min-width: 0;
+  max-width: 340px;
+  align-self: stretch;
+  font-size: 15px;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.08);
+}
+.retreat-card h3 {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--green);
+  line-height: 1.25;
+}
+.retreat-card__pill {
+  display: inline-block;
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rust);
+  background: rgba(146,89,36,0.1);
+  padding: 5px 12px;
+  border-radius: 100px;
+  align-self: flex-start;
+}
+.retreat-card__location {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--brown);
+}
+.retreat-card__theme {
+  color: var(--brown);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.55;
+  height: 18em;            /* fixed — every card's window is identical; sized so July fits with no scroll */
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(146,89,36,0.4) transparent;
+}
+.retreat-card__theme::-webkit-scrollbar { width: 5px; }
+.retreat-card__theme::-webkit-scrollbar-track { background: transparent; }
+.retreat-card__theme::-webkit-scrollbar-thumb {
+  background: rgba(146,89,36,0.4);
+  border-radius: 3px;
+}
+.retreat-card h3 { font-size: 20px; }
+.retreat-card .btn { align-self: flex-start; margin-top: auto; }
+
+/* Founder letter */
+.founder {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  align-items: start;
+  margin-top: 2.5rem;
+}
+.founder-headshot {
+  width: clamp(220px, 22vw, 320px);
+  height: clamp(220px, 22vw, 320px);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(146,89,36,0.25);
+}
+/* White card wrapper for the founder letter when placed on a textured
+   background — keeps the letter copy readable against the texture. */
+.founder-letter-card {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.1);
+}
+
+.founder-letter {
+  max-height: 70vh;
+  overflow-y: scroll;            /* scroll (not auto) — always reserves the gutter */
+  scrollbar-gutter: stable;       /* belt + suspenders: keep the gutter reserved */
+  padding-right: 1.5rem;
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--brown);
+  scrollbar-width: thin;
+  scrollbar-color: var(--rust) rgba(146, 89, 36, 0.22);
+}
+/* Custom WebKit scrollbar — visible track so the gutter shows even when
+   macOS auto-hides the thumb. Removed -webkit-appearance:none because it
+   can disable the custom rendering on some macOS versions. */
+.founder-letter::-webkit-scrollbar {
+  width: 10px;
+}
+.founder-letter::-webkit-scrollbar-track {
+  background: rgba(146, 89, 36, 0.22);
+  border-radius: 5px;
+}
+.founder-letter::-webkit-scrollbar-thumb {
+  background: var(--rust);
+  border-radius: 5px;
+  min-height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  background-clip: padding-box;
+}
+.founder-letter::-webkit-scrollbar-thumb:hover {
+  background: var(--brown);
+  background-clip: padding-box;
+}
+.founder-letter strong, .founder-letter b {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 600;
+  color: var(--green);
+}
+.founder-letter p + p { margin-top: 1.2em; }
+.founder-letter__close {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 26px;
+  color: var(--green);
+  margin-top: 2rem;
+}
+.founder-letter__sign {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: var(--sz-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-top: 0.5rem;
+}
+.founder-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  color: var(--orange);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.founder-link:hover { text-decoration: underline; }
+
+/* Integration specialist (Libby) two-col */
+.specialist {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2.5rem;
+  align-items: start;
+  margin-top: 2.5rem;
+}
+.specialist-headshot {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(146,89,36,0.25);
+}
+
+/* Partners in Practice grid — flex with center wrap so an orphan
+   row centers automatically (e.g., 5 cards in 3-col gives a row of 2
+   centered beneath, not left-aligned with a blank cell). */
+.partners-grid {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem 2rem;
+  margin-top: 3rem;
+  padding: 2rem;
+}
+.partners-grid .partner-card {
+  flex: 0 0 calc(33.333% - 1.5rem);
+  max-width: 280px;
+}
+@media (max-width: 900px) {
+  .partners-grid .partner-card { flex: 0 0 calc(50% - 1rem); }
+}
+@media (max-width: 540px) {
+  .partners-grid .partner-card { flex: 0 0 100%; max-width: 280px; }
+}
+.partner-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  position: relative;
+  z-index: 2;
+}
+.partner-headshot {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(146,89,36,0.25);
+}
+@media (max-width: 900px) {
+  .partner-headshot { width: 140px; height: 140px; }
+}
+.partner-name {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--green);
+  line-height: 1.2;
+}
+.partner-role {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rust);
+  line-height: 1.4;
+}
+.partner-link {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--orange);
+  text-decoration: none;
+}
+.partner-link:hover { text-decoration: underline; }
+
+/* Partner name acting as a link — inherits .partner-name look, no underline,
+   subtle hover state. Applied as <a class="partner-name partner-name--link"> */
+.partner-name--link {
+  text-decoration: none;
+  transition: color 200ms ease;
+  display: inline-block;
+}
+.partner-name--link:hover { color: var(--orange); }
+
+
+/* 12. Footer ========================================================== */
+.site-footer {
+  background: var(--brown);
+  color: var(--sand);
+  padding: clamp(60px, 8vw, 100px) var(--page-margin) 2.5rem;
+  display: grid;
+  gap: 2.5rem;
+  text-align: center;
+}
+.footer-logo img {
+  width: 260px;
+  margin: 0 auto;
+}
+.footer-subscribe {
+  max-width: 540px;
+  margin: 0 auto;
+  width: 100%;
+}
+.footer-subscribe-intro {
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--sand);
+}
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem 2rem;
+}
+.footer-nav a {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sand);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+.footer-nav a:hover { color: var(--orange); }
+.footer-disclaimer {
+  max-width: 640px;
+  margin: 0 auto;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(226,213,179,0.55);
+  font-weight: 300;
+}
+.footer-copyright {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(226,213,179,0.55);
+}
+
+
+/* 13. Forms (bc-forms.css inlined) ==================================== */
+.bc-form-wrap { width: 100%; }
+
+.bc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bc-form-row {
+  display: flex;
+  gap: 16px;
+}
+.bc-form-row--2col > .bc-field { flex: 1 1 0; min-width: 0; }
+@media (max-width: 540px) {
+  .bc-form-row--2col { flex-direction: column; }
+}
+
+.bc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bc-label {
+  font-family: var(--form-font);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+.bc-form--light .bc-label { color: var(--brown); }
+
+.bc-input {
+  font-family: var(--form-font);
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--offwhite);
+  background: transparent;
+  border: 2px solid rgba(226, 213, 179, 0.55);
+  border-radius: var(--input-radius);
+  padding: 14px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.bc-input::placeholder { color: rgba(242, 242, 242, 0.35); }
+.bc-input:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px rgba(244, 118, 33, 0.2);
+}
+.bc-form--light .bc-input {
+  color: var(--brown);
+  border-color: rgba(55, 44, 28, 0.45);
+}
+.bc-form--light .bc-input::placeholder { color: rgba(55, 44, 28, 0.35); }
+
+.bc-textarea { resize: vertical; min-height: 120px; }
+
+.bc-select-wrap { position: relative; }
+.bc-select { cursor: pointer; padding-right: 40px; }
+.bc-select option { background: var(--brown); color: var(--offwhite); }
+.bc-form--light .bc-select option { background: var(--offwhite); color: var(--brown); }
+.bc-select-arrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 13px;
+  color: var(--sand);
+  opacity: 0.7;
+}
+.bc-form--light .bc-select-arrow { color: var(--brown); }
+
+.bc-field--checkbox { flex-direction: row; align-items: flex-start; }
+.bc-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-family: var(--form-font);
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--sand);
+  line-height: 1.5;
+}
+.bc-checkbox { position: absolute; opacity: 0; width: 0; height: 0; }
+.bc-checkbox-custom {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(226, 213, 179, 0.5);
+  border-radius: 4px;
+  background: transparent;
+  margin-top: 2px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+.bc-checkbox:checked + .bc-checkbox-custom {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+.bc-checkbox:checked + .bc-checkbox-custom::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.bc-checkbox:focus + .bc-checkbox-custom {
+  box-shadow: 0 0 0 2px rgba(244, 118, 33, 0.3);
+}
+.bc-form--light .bc-checkbox-label { color: var(--brown); }
+.bc-form--light .bc-checkbox-custom { border-color: rgba(55, 44, 28, 0.4); }
+
+.bc-form-footer { display: flex; align-items: center; }
+
+.bc-btn {
+  font-family: var(--form-font);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--btn-radius);
+  padding: 14px 32px;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+.bc-btn:hover  { opacity: 0.88; }
+.bc-btn:active { transform: scale(0.98); }
+.bc-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.bc-btn--primary { background: var(--orange); color: #fff; }
+.bc-btn--ghost   { background: transparent; color: var(--offwhite); border: 1.5px solid var(--offwhite); }
+.bc-btn--dark    { background: var(--green); color: var(--offwhite); }
+
+.bc-form-message {
+  font-family: var(--form-font);
+  font-weight: 400;
+  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: var(--input-radius);
+}
+.bc-form-message--success {
+  color: var(--offwhite);
+  background: rgba(105, 200, 198, 0.15);
+  border: 1px solid rgba(105, 200, 198, 0.4);
+}
+.bc-form-message--error {
+  color: var(--pink);
+  background: rgba(236, 77, 95, 0.1);
+  border: 1px solid rgba(236, 77, 95, 0.3);
+}
+.bc-form--light .bc-form-message--success {
+  color: var(--green);
+  background: rgba(60, 145, 141, 0.12);
+  border-color: rgba(60, 145, 141, 0.35);
+}
+
+
+/* 14. Page-specific: terms / privacy ================================== */
+.legal-header {
+  background: var(--green);
+  color: var(--offwhite);
+  padding: clamp(120px, 14vw, 180px) var(--page-margin) clamp(60px, 8vw, 100px);
+}
+.legal-header h1 {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: var(--sz-headline);
+  color: var(--offwhite);
+}
+.legal-header .legal-updated {
+  display: block;
+  margin-top: 1rem;
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(242,242,242,0.55);
+}
+.legal-body {
+  background: var(--offwhite);
+  color: var(--brown);
+  padding: clamp(60px, 8vw, 100px) var(--page-margin);
+}
+.legal-body__inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+}
+.legal-body__inner h2 {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--green);
+  margin-top: 1.25em;
+}
+.legal-body__inner h2:first-of-type { margin-top: 0; }
+.legal-body__inner p,
+.legal-body__inner li {
+  font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--brown);
+}
+.legal-body__inner a { color: var(--orange); }
+.legal-body__inner ul { padding-left: 1.25em; list-style: disc; }
+.legal-body__inner ul li::marker { color: var(--orange); }
+
+
+/* 15. Responsive ====================================================== */
+@media (max-width: 900px) {
+  .panel-grid    { grid-template-columns: 1fr; }
+  .founder       { grid-template-columns: 1fr; text-align: center; }
+  .founder-headshot { margin: 0 auto; }
+  .founder-letter   { max-height: 60vh; padding-right: 0.5rem; }
+  .specialist    { grid-template-columns: 1fr; text-align: center; }
+  .specialist-headshot { margin: 0 auto; width: 140px; height: 140px; }
+  .two-col       { grid-template-columns: 1fr; }
+  .schedule-row  { grid-template-columns: 110px 1fr; gap: 1rem; }
+}
+
+@media (max-width: 768px) {
+  .nav-toggle { display: block; }
+  .nav-links {
+    position: fixed;
+    inset: 0;
+    background: var(--green);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transform: translateY(-100%);
+    transition: transform 350ms ease;
+    z-index: 999;
+  }
+  .nav-links.is-open { transform: translateY(0); }
+  .nav-links a { font-size: 18px; }
+  .nav-links .btn { padding: 14px 28px; font-size: 12px; }
+
+  .partners-grid { padding: 1rem; }
+  .schedule-row  { grid-template-columns: 1fr; gap: 0.4rem; padding: 0.5rem 0 1rem; }
+  .retreat-gallery { grid-auto-flow: row; grid-auto-columns: auto; }
+  .retreat-card { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .hero-intro__logo { width: 220px; }
+  .snap-slide__quote { font-size: clamp(40px, 11vw, 60px); }
+}
+
+/* Touch targets */
+@media (pointer: coarse) {
+  .btn, .bc-btn, .nav-links a, .partner-link, .footer-nav a { min-height: 44px; }
+  .btn, .bc-btn { display: inline-flex; align-items: center; justify-content: center; }
+}
+
+
+/* 16. prefers-reduced-motion ========================================== */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale,
+  .reveal-emphasis,
+  .reveal-stagger > *,
+  .buffalo-animate,
+  .team-star,
+  .ticker-track,
+  .texture-bg,
+  .highlight-reveal,
+  .snap-slide__quote,
+  .star-scatter img {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    background-size: 100% 38% !important;
+  }
+  .hero-intro__inner,
+  .hero-intro__logo,
+  .hero-intro__tagline { transition: none !important; transform: none !important; }
+  .snap-container { scroll-snap-type: none; height: auto; overflow: visible; }
+  .snap-slide { height: auto; min-height: 60vh; }
+}
