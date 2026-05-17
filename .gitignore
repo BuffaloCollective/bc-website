@@ -1,3 +1,6 @@
 .DS_Store
 bc_build_spec.md
 content.md
+
+# Local backup of uncompressed source textures — not used by the site.
+assets/images/textures-original/

@@ -179,7 +179,7 @@
     if (!highlights.length) return;
 
     if (prefersReducedMotion) {
-      highlights.forEach((el) => { el.style.backgroundSize = "100% 38%"; });
+      highlights.forEach((el) => { el.style.backgroundSize = "100% 105%"; });
       return;
     }
 
@@ -197,7 +197,7 @@
           !revealAncestor || revealAncestor.classList.contains("is-visible");
 
         if (!parentVisible) {
-          el.style.backgroundSize = "0% 38%";
+          el.style.backgroundSize = "0% 105%";
           el._fillStartTop = null;
           return;
         }
@@ -219,7 +219,7 @@
         const fillSpan   = rect.height + vh * 0.1;
         const effective  = Math.max(0, traveled - startDelay);
         const progress   = Math.max(0, Math.min(1, effective / fillSpan));
-        el.style.backgroundSize = (progress * 100).toFixed(2) + "% 38%";
+        el.style.backgroundSize = (progress * 100).toFixed(2) + "% 105%";
       });
       ticking = false;
     }

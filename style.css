@@ -220,6 +220,13 @@ strong, b { font-weight: 600; }
 .bg-orange   { background: var(--orange);   color: #fff; }
 .bg-orange   h2, .bg-orange h3, .bg-orange h4 { color: #fff; }
 .bg-orange   p { color: rgba(255,255,255,0.92); }
+/* White-on-orange is low-contrast — bold every weight to thicken strokes. */
+.bg-orange,
+.bg-orange p,
+.bg-orange .t-body,
+.bg-orange .t-pullquote,
+.bg-orange .t-attribution,
+.bg-orange cite { font-weight: 700; }
 
 .bg-pink     { background: var(--pink);     color: #fff; }
 .bg-pink     h2, .bg-pink h3, .bg-pink h4 { color: #fff; }
@@ -263,7 +270,7 @@ strong, b { font-weight: 600; }
 .btn:hover  { opacity: 0.92; }
 .btn:active { transform: scale(0.985); }
 
-.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary { background: var(--orange); color: #fff; font-weight: 700; }
 .btn-ghost   { background: transparent; color: var(--offwhite); border: 1.5px solid rgba(242,242,242,0.45); }
 .btn-dark    { background: var(--green); color: var(--offwhite); }
 .btn-sand    { background: var(--sand); color: var(--green); }
@@ -326,7 +333,7 @@ body:not(.home) .site-nav {
 }
 .nav-links a {
   font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
-  font-weight: 500;
+  font-weight: 700;
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -335,7 +342,7 @@ body:not(.home) .site-nav {
   transition: opacity 200ms ease;
 }
 .nav-links a:hover { opacity: 0.75; }
-.nav-links a.is-active { border-bottom: 2px solid var(--orange); padding-bottom: 4px; }
+.nav-links a.is-active { box-shadow: 0 2px 0 0 var(--orange); }
 .nav-links .btn { padding: 11px 22px; font-size: 11px; }
 
 .nav-toggle {
@@ -552,10 +559,23 @@ body:not(.home) .site-nav {
    Exclude .texture-bg itself — it needs its own absolute positioning. */
 .texture-section > *:not(.texture-bg) { position: relative; z-index: 2; }
 
+/* Cream wash over the texture image, behind content.
+   NOTE: 10% is a light cosmetic tint, NOT a contrast-grade scrim —
+   it does not, on its own, bring text over textures to WCAG AA. */
+.texture-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--offwhite);
+  opacity: 0.10;
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* Default text color over textures — set on the section so children inherit.
    Specific color helpers (.c-orange, .c-teal, etc.) on any descendant still
    win over inheritance, so quote colors etc. apply correctly. */
-.texture-section { color: var(--offwhite); }
+.texture-section { color: var(--brown); }
 
 /* Subtle text-shadow lift on headings and large display text. */
 .texture-section h1,
@@ -569,18 +589,18 @@ body:not(.home) .site-nav {
 .texture-section .t-italic,
 .texture-section .snap-slide__quote,
 .texture-section .hero-intro__tagline {
-  text-shadow: 0 2px 14px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.25);
+  text-shadow: 0 1px 2px rgba(242,242,242,0.8), 0 0 12px rgba(242,242,242,0.6);
 }
 
 /* Body copy over textures gets extra help — heavier weight, warmer color,
    tighter shadow, and a constrained measure for easier scanning. */
 .texture-section .t-body {
   font-weight: 400;
-  color: var(--sand);
+  color: var(--brown);
   max-width: min(52ch, 100%);
   text-shadow:
-    0 2px 8px rgba(0,0,0,0.65),
-    0 0 2px rgba(0,0,0,0.9);
+    0 1px 2px rgba(242,242,242,0.8),
+    0 0 10px rgba(242,242,242,0.6);
 }
 
 
@@ -684,8 +704,8 @@ body:not(.home) .site-nav {
    then line 3 in sequence as the reader scrolls. */
 .highlight-reveal {
   background: linear-gradient(var(--orange), var(--orange)) no-repeat left center;
-  background-size: 0% 38%;
-  background-position: 0 70%;
+  background-size: 0% 105%;
+  background-position: 0 center;
   padding: 0 6px;
   display: inline;
 }
@@ -1670,7 +1690,7 @@ body:not(.home) .site-nav {
     transition: none !important;
     transform: none !important;
     opacity: 1 !important;
-    background-size: 100% 38% !important;
+    background-size: 100% 105% !important;
   }
   .hero-intro__inner,
   .hero-intro__logo,
