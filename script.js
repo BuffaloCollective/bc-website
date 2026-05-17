@@ -62,26 +62,77 @@
     setScrolled();
 
     if (toggle && links) {
-      toggle.addEventListener("click", () => {
-        const open = links.classList.toggle("is-open");
+      const focusables = () =>
+        Array.from(links.querySelectorAll("a, button")).filter(
+          (el) => !el.disabled && el.offsetParent !== null
+        );
+
+      function setMenu(open) {
+        links.classList.toggle("is-open", open);
         toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        toggle.setAttribute(
+          "aria-label",
+          open ? "Close navigation menu" : "Open navigation menu"
+        );
         document.body.style.overflow = open ? "hidden" : "";
+        if (open) {
+          const first = focusables()[0];
+          if (first) first.focus();
+        }
+      }
+
+      toggle.addEventListener("click", () => {
+        setMenu(!links.classList.contains("is-open"));
       });
-      // Close menu when a link is clicked
+
+      // Close on link click, returning focus to the toggle.
       links.querySelectorAll("a").forEach((a) => {
-        a.addEventListener("click", () => {
-          links.classList.remove("is-open");
-          toggle.setAttribute("aria-expanded", "false");
-          document.body.style.overflow = "";
-        });
+        a.addEventListener("click", () => setMenu(false));
+      });
+
+      // Keyboard: Esc closes and returns focus to the toggle;
+      // Tab is trapped within the open full-screen menu.
+      document.addEventListener("keydown", (e) => {
+        if (!links.classList.contains("is-open")) return;
+        if (e.key === "Escape") {
+          setMenu(false);
+          toggle.focus();
+          return;
+        }
+        if (e.key === "Tab") {
+          const items = focusables();
+          if (!items.length) return;
+          const first = items[0];
+          const last = items[items.length - 1];
+          const active = document.activeElement;
+          if (e.shiftKey && (active === first || active === toggle)) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && active === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       });
     }
 
-    // Mark active page link
-    const path = window.location.pathname.split("/").pop() || "index.html";
+    // Mark active page link.
+    // Normalize both sides: strip query/hash, drop trailing slash, drop
+    // .html so /herds, /herds.html, and herds.html all match.
+    const normalize = (s) =>
+      (s || "")
+        .split("?")[0]
+        .split("#")[0]
+        .replace(/\/$/, "")
+        .split("/")
+        .pop()
+        .replace(/\.html$/, "")
+        .toLowerCase() || "index";
+    const currentPage = normalize(window.location.pathname);
     nav.querySelectorAll(".nav-links a").forEach((a) => {
-      const href = a.getAttribute("href");
-      if (href === path) a.classList.add("is-active");
+      const href = a.getAttribute("href") || "";
+      if (href.startsWith("#")) return; // skip anchor-only links like #footer-subscribe
+      if (normalize(href) === currentPage) a.classList.add("is-active");
     });
   }
 

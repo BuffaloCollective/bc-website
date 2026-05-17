@@ -102,6 +102,44 @@ strong, b { font-weight: 600; }
   border: 0;
 }
 
+/* Skip-to-content link — off-screen until keyboard-focused. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 10000;
+  transform: translateY(-150%);
+  background: var(--green);
+  color: var(--offwhite);
+  font-family: var(--form-font, inherit);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: transform 160ms ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+
+/* Global visible focus indicator for keyboard users.
+   Double ring (dark + light) so it stays visible on every
+   section background — green, sand, orange, pink, brown, texture. */
+:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 5px rgba(22, 70, 43, 0.85);
+}
+.bc-input:focus-visible,
+.bc-checkbox:focus-visible + .bc-checkbox-custom {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+
 
 /* 3. Typography utilities ============================================= */
 .serif {
@@ -297,7 +335,7 @@ body:not(.home) .site-nav {
   transition: opacity 200ms ease;
 }
 .nav-links a:hover { opacity: 0.75; }
-.nav-links a.is-active { border-bottom: 1.5px solid var(--orange); padding-bottom: 4px; }
+.nav-links a.is-active { border-bottom: 2px solid var(--orange); padding-bottom: 4px; }
 .nav-links .btn { padding: 11px 22px; font-size: 11px; }
 
 .nav-toggle {
