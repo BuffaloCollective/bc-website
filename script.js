@@ -19,6 +19,14 @@
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
+  // Touch-primary devices (phones/tablets). Their browser URL bars resize
+  // the viewport on every scroll, which makes scroll-driven + reverse-on-
+  // scroll animations thrash. On these devices we run reveals once (no
+  // reverse), skip parallax, and render the highlight pre-filled.
+  const isTouch = window.matchMedia(
+    "(hover: none) and (pointer: coarse)"
+  ).matches;
+
   /* ── 1. Reading indicator ─────────────────────────────────────── */
   function initReadingIndicator() {
     const bar = document.getElementById("reading-indicator");
@@ -153,10 +161,12 @@
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Toggle (not unobserve) so animations reverse on scroll up.
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
-          } else {
+            // Touch: fire once and stop watching — no reverse, no replay.
+            if (isTouch) observer.unobserve(entry.target);
+          } else if (!isTouch) {
+            // Desktop only: reverse on scroll-up.
             entry.target.classList.remove("is-visible");
           }
         });
@@ -178,7 +188,9 @@
     const highlights = Array.from(document.querySelectorAll(".highlight-reveal"));
     if (!highlights.length) return;
 
-    if (prefersReducedMotion) {
+    // Reduced-motion OR touch: render the highlight pre-filled instead of
+    // recomputing the sweep on every (jittery, URL-bar-driven) scroll tick.
+    if (prefersReducedMotion || isTouch) {
       highlights.forEach((el) => { el.style.backgroundSize = "100% 105%"; });
       return;
     }
@@ -237,7 +249,9 @@
 
   /* ── 4. Texture parallax ──────────────────────────────────────── */
   function initParallax() {
-    if (prefersReducedMotion) return;
+    // Skip on reduced-motion and touch — on touch the texture sits static
+    // (no transform), which is stable and visually fine.
+    if (prefersReducedMotion || isTouch) return;
 
     const layers = Array.from(document.querySelectorAll(".texture-bg"));
     if (!layers.length) return;
@@ -294,7 +308,8 @@
           const stars = entry.target.querySelectorAll("img");
           if (entry.isIntersecting) {
             stars.forEach((img) => img.classList.add("is-visible"));
-          } else {
+            if (isTouch) observer.unobserve(entry.target); // fire once
+          } else if (!isTouch) {
             stars.forEach((img) => img.classList.remove("is-visible"));
           }
         });
@@ -378,10 +393,11 @@
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          // Toggle so the quote animation reverses if user scrolls back.
           if (e.isIntersecting) {
             e.target.classList.add("is-visible");
-          } else {
+            if (isTouch) observer.unobserve(e.target); // fire once on touch
+          } else if (!isTouch) {
+            // Desktop only: reverse the quote on scroll-back.
             e.target.classList.remove("is-visible");
           }
         });

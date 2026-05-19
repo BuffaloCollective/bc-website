@@ -571,6 +571,9 @@ body:not(.home) .site-nav {
   z-index: 1;
   pointer-events: none;
 }
+/* Stronger wash (20%) for sections with body copy sitting directly
+   over the texture — improves legibility on those specific heroes. */
+.texture-section--dim::after { opacity: 0.20; }
 
 /* Default text color over textures — set on the section so children inherit.
    Specific color helpers (.c-orange, .c-teal, etc.) on any descendant still
@@ -944,11 +947,12 @@ body:not(.home) .site-nav {
 @media (max-width: 768px) {
   .buffalo-split { grid-template-columns: 1fr; gap: 1.5rem; }
   /* On mobile, flatten the .flow wrapper inside buffalo-split so its
-     children become direct grid items, then push any h3 (the "Wisdom
-     and strength…" statement) to load AFTER the buffalo. */
+     children become direct grid items, then push the statement heading
+     (the "Wisdom and strength…" line) to load AFTER the buffalo. */
   .buffalo-split > .flow { display: contents; }
   .buffalo-split > .flow > * { order: 1; }
   .buffalo-split__buffalo { order: 2; }
+  .buffalo-split > .flow > h2,
   .buffalo-split > .flow > h3 { order: 3; }
 }
 
@@ -1378,6 +1382,17 @@ body:not(.home) .site-nav {
   transition: color 200ms ease;
 }
 .footer-nav a:hover { color: var(--orange); }
+/* Land acknowledgment — visual weight sits between the footer nav
+   (full sand, 500) and the disclaimer (55% sand, 300). */
+.footer-land {
+  max-width: 620px;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(226,213,179,0.8);
+  font-weight: 400;
+}
+
 .footer-disclaimer {
   max-width: 640px;
   margin: 0 auto;
@@ -1697,4 +1712,44 @@ body:not(.home) .site-nav {
   .hero-intro__tagline { transition: none !important; transform: none !important; }
   .snap-container { scroll-snap-type: none; height: auto; overflow: visible; }
   .snap-slide { height: auto; min-height: 60vh; }
+}
+
+/* ===================================================================
+   NUCLEAR: kill ALL text/entrance animation on mobile-sized viewports.
+   Mobile browser URL bars resize the viewport on scroll, which makes
+   scroll-driven + reverse-on-scroll motion thrash. Below 768px every
+   animated element renders in its final, static state — no entrances,
+   no parallax, no scroll-driven highlight. Independent of JS.
+   =================================================================== */
+@media (max-width: 768px) {
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale,
+  .reveal-emphasis,
+  .reveal-stagger > *,
+  .buffalo-animate,
+  .team-star,
+  .ticker-track,
+  .texture-bg,
+  .snap-slide__quote,
+  .star-scatter img,
+  .about-quote,
+  .hero-rise,
+  .hero-intro__inner,
+  .hero-intro__logo,
+  .hero-intro__tagline {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  /* Highlight sweep: render pre-filled instead of scrubbing on scroll.
+     (Kept separate so .texture-bg keeps background-size: cover and
+     doesn't get stretched.) */
+  .highlight-reveal {
+    animation: none !important;
+    transition: none !important;
+    background-size: 100% 105% !important;
+  }
 }
