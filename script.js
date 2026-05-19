@@ -497,22 +497,30 @@
     }
 
     let triggered = false;
-    function trigger() {
+    // scrollTarget: if the intro was dismissed by clicking an in-page
+    // anchor (e.g. nav "Subscribe" -> #footer-subscribe), scroll there
+    // instead of yanking back to the top.
+    function trigger(scrollTarget) {
       if (triggered) return;
       triggered = true;
       hero.classList.add("is-leaving");
       document.body.classList.add("intro-done");
 
-      // After fade-out, collapse the hero so the snap container takes over.
+      // Anchor-click dismissals collapse immediately (snappy jump to the
+      // target); ambient scroll/wheel keeps the 650ms lift-out animation.
+      const delay = scrollTarget ? 0 : 650;
       setTimeout(() => {
         hero.style.display = "none";
-        window.scrollTo({ top: 0, behavior: "auto" });
-        // Trigger slide 1's drop-in immediately so it feels like a hand-off
-        // from the logo/tagline that just lifted out — don't wait for the
-        // observer to re-evaluate after the layout shift.
+        // Slide 1's drop-in immediately so it feels like a hand-off from
+        // the logo/tagline — needed if the user later scrolls back up.
         const firstSlide = document.querySelector(".snap-slide:first-child");
         if (firstSlide) firstSlide.classList.add("is-visible");
-      }, 650);
+        if (scrollTarget) {
+          scrollTarget.scrollIntoView();
+        } else {
+          window.scrollTo({ top: 0, behavior: "auto" });
+        }
+      }, delay);
 
       window.removeEventListener("wheel", onIntent);
       window.removeEventListener("touchmove", onIntent);
@@ -528,11 +536,30 @@
     function onScroll() {
       if (window.scrollY > 4) trigger();
     }
+    // In-page anchor links clicked while the intro is still showing:
+    // intercept so the native hash jump doesn't race the dismiss logic.
+    function onAnchorClick(e) {
+      if (triggered) return; // intro already gone — normal behavior
+      const href = e.currentTarget.getAttribute("href") || "";
+      if (!href.startsWith("#") || href.length < 2) return;
+      let target = document.getElementById(href.slice(1));
+      if (!target) return;
+      // If the target sits inside the footer, anchor the whole footer's
+      // top to the viewport — #footer-subscribe is near the document end
+      // so it can't reach viewport-top on its own and lands mid-screen.
+      const footer = target.closest(".site-footer");
+      if (footer) target = footer;
+      e.preventDefault();
+      trigger(target);
+    }
 
     window.addEventListener("wheel", onIntent, { passive: true });
     window.addEventListener("touchmove", onIntent, { passive: true });
     window.addEventListener("keydown", onKey);
     window.addEventListener("scroll", onScroll, { passive: true });
+    document
+      .querySelectorAll('a[href^="#"]')
+      .forEach((a) => a.addEventListener("click", onAnchorClick));
   }
 
   /* ── Init ─────────────────────────────────────────────────────── */

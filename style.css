@@ -92,6 +92,30 @@ h1, h2, h3, h4, h5, h6, p { margin: 0; }
 
 strong, b { font-weight: 600; }
 
+/* Universal rust scrollbar — the page and every in-container scroll
+   area, for one consistent look. Background-agnostic (no light/dark
+   inset) so it reads correctly on green, brown, sand, and white. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rust) rgba(146, 89, 36, 0.22);
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(146, 89, 36, 0.22);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--rust);
+  border-radius: 5px;
+  min-height: 40px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brown);
+}
+
 .visually-hidden {
   position: absolute !important;
   width: 1px; height: 1px;
@@ -1136,14 +1160,7 @@ body:not(.home) .site-nav {
   height: 18em;            /* fixed — every card's window is identical; sized so July fits with no scroll */
   overflow-y: auto;
   padding-right: 10px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(146,89,36,0.4) transparent;
-}
-.retreat-card__theme::-webkit-scrollbar { width: 5px; }
-.retreat-card__theme::-webkit-scrollbar-track { background: transparent; }
-.retreat-card__theme::-webkit-scrollbar-thumb {
-  background: rgba(146,89,36,0.4);
-  border-radius: 3px;
+  /* Scrollbar styling inherited from the universal rust rule. */
 }
 .retreat-card h3 { font-size: 20px; }
 .retreat-card .btn { align-self: flex-start; margin-top: auto; }
@@ -1182,29 +1199,7 @@ body:not(.home) .site-nav {
   font-size: 16px;
   line-height: 1.9;
   color: var(--brown);
-  scrollbar-width: thin;
-  scrollbar-color: var(--rust) rgba(146, 89, 36, 0.22);
-}
-/* Custom WebKit scrollbar — visible track so the gutter shows even when
-   macOS auto-hides the thumb. Removed -webkit-appearance:none because it
-   can disable the custom rendering on some macOS versions. */
-.founder-letter::-webkit-scrollbar {
-  width: 10px;
-}
-.founder-letter::-webkit-scrollbar-track {
-  background: rgba(146, 89, 36, 0.22);
-  border-radius: 5px;
-}
-.founder-letter::-webkit-scrollbar-thumb {
-  background: var(--rust);
-  border-radius: 5px;
-  min-height: 40px;
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  background-clip: padding-box;
-}
-.founder-letter::-webkit-scrollbar-thumb:hover {
-  background: var(--brown);
-  background-clip: padding-box;
+  /* Scrollbar styling inherited from the universal rust rule. */
 }
 .founder-letter strong, .founder-letter b {
   font-family: "Zalando Sans Expanded", "DM Sans", sans-serif;
