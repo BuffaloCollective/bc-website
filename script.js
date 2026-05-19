@@ -563,6 +563,33 @@
   }
 
   /* ── Init ─────────────────────────────────────────────────────── */
+  /*  Universal footer-anchor handler: any in-page anchor whose target
+      lives inside .site-footer (e.g. nav "Subscribe" -> #footer-subscribe)
+      anchors the WHOLE footer's top to the viewport. #footer-subscribe
+      sits near the document end, so a native jump can't reach viewport-
+      top and leaves the form floating mid-screen. Runs on every page.
+      On the home page while the logo intro is still showing, defer to
+      initHomeIntro (it must dismiss the hero first). */
+  function initFooterAnchors() {
+    document.querySelectorAll('a[href^="#"]').forEach((a) => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href") || "";
+        if (href.length < 2) return;
+        const target = document.getElementById(href.slice(1));
+        if (!target) return;
+        const footer = target.closest(".site-footer");
+        if (!footer) return;
+        const introPending =
+          document.body.classList.contains("home") &&
+          !document.body.classList.contains("intro-done");
+        if (introPending) return; // initHomeIntro handles this case
+        e.preventDefault();
+        footer.scrollIntoView();
+        if (history.replaceState) history.replaceState(null, "", href);
+      });
+    });
+  }
+
   function init() {
     initReadingIndicator();
     initNav();
@@ -574,6 +601,10 @@
     initTicker();
     initSnapSlides();
     initSnapNav();
+    // initFooterAnchors before initHomeIntro so its click listener
+    // registers (and fires) first — on home pre-intro it sees the
+    // guard true and bails, letting the intro handler dismiss the hero.
+    initFooterAnchors();
     initHomeIntro();
   }
 
