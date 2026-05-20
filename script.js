@@ -590,7 +590,22 @@
     });
   }
 
+  /*  Capture utm_source from the URL on page load and stash it in
+      sessionStorage. The newsletter form submission picks this up and
+      sends it as the contact's SOURCE attribute to Brevo. Sticky for
+      the session — a visitor can land via a UTM link, browse around,
+      then subscribe later, and the original source still gets credit. */
+  function initUtmCapture() {
+    try {
+      const utm = new URLSearchParams(window.location.search).get("utm_source");
+      if (utm) sessionStorage.setItem("bc_utm_source", utm.slice(0, 100));
+    } catch (e) {
+      /* sessionStorage unavailable (e.g. privacy mode) — silently ignore. */
+    }
+  }
+
   function init() {
+    initUtmCapture();
     initReadingIndicator();
     initNav();
     initReveals();

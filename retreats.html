@@ -378,6 +378,10 @@
               email: form.email.value.trim(),
             };
             try {
+              const utmSource = sessionStorage.getItem("bc_utm_source");
+              if (utmSource) data.source = utmSource;
+            } catch (e) { /* sessionStorage unavailable */ }
+            try {
               const res = await fetch("/.netlify/functions/subscribe", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

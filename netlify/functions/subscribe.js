@@ -13,7 +13,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
-  const { firstName, email } = body;
+  const { firstName, email, source } = body;
 
   if (!firstName || !email) {
     return {
@@ -22,11 +22,16 @@ exports.handler = async (event) => {
     };
   }
 
+  const attributes = { FIRSTNAME: firstName };
+  // Optional: utm_source captured client-side, stored as SOURCE on the
+  // Brevo contact. Only set if non-empty and reasonable length.
+  if (typeof source === "string" && source.trim() && source.length <= 100) {
+    attributes.SOURCE = source.trim();
+  }
+
   const payload = {
     email,
-    attributes: {
-      FIRSTNAME: firstName,
-    },
+    attributes,
     listIds: [8],
     updateEnabled: true,
   };
