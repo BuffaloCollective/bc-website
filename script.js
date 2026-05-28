@@ -176,7 +176,31 @@
       { threshold: 0.25, rootMargin: "0px 0px -18% 0px" }
     );
 
-    document.querySelectorAll(SELECTOR).forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll(SELECTOR)
+      .forEach((el) => {
+        if (el.classList.contains("reveal-early")) return;
+        observer.observe(el);
+      });
+
+    // Early-reveal observer: fires while the element is still ~25%
+    // BELOW the fold, so by the time the reader reaches it the entrance
+    // animation has already played. Fire-once for everyone (no reverse).
+    const earlyEls = document.querySelectorAll(".reveal-early");
+    if (earlyEls.length) {
+      const earlyObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              earlyObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0, rootMargin: "0px 0px 25% 0px" }
+      );
+      earlyEls.forEach((el) => earlyObserver.observe(el));
+    }
   }
 
   /* ── 3b. Scroll-driven highlight sweep ────────────────────────── */
@@ -185,7 +209,12 @@
       background-size live. The fill grows L→R in step with how far
       the reader has scrolled through the element — not all at once. */
   function initHighlights() {
-    const highlights = Array.from(document.querySelectorAll(".highlight-reveal"));
+    // Pink variant (home Section 2) is rendered pre-filled via CSS —
+    // no scroll-driven sweep. Exclude it from the JS animator so its
+    // inline background-size doesn't get touched.
+    const highlights = Array.from(
+      document.querySelectorAll(".highlight-reveal:not(.highlight-reveal--pink)")
+    );
     if (!highlights.length) return;
 
     // Reduced-motion OR touch: render the highlight pre-filled instead of
@@ -247,10 +276,13 @@
     update();
   }
 
-  /* ── 4. Texture parallax ──────────────────────────────────────── */
+  /* ── 4. Texture parallax (disabled) ──────────────────────────── */
+  /*  Textured sections fade in and stay — no slide/movement. Kept the
+      function for structure but it no-ops; the .texture-bg layer is
+      rendered statically by CSS. */
   function initParallax() {
-    // Skip on reduced-motion and touch — on touch the texture sits static
-    // (no transform), which is stable and visually fine.
+    return;
+    // eslint-disable-next-line no-unreachable
     if (prefersReducedMotion || isTouch) return;
 
     const layers = Array.from(document.querySelectorAll(".texture-bg"));

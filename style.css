@@ -288,10 +288,14 @@ strong, b { font-weight: 600; }
   border: none;
   cursor: pointer;
   line-height: 1;
-  transition: opacity 200ms ease, transform 200ms ease, background 200ms ease, color 200ms ease;
+  transition: filter 200ms ease, transform 200ms ease, background 200ms ease, color 200ms ease, border-color 200ms ease, text-decoration-color 200ms ease;
   white-space: nowrap;
 }
-.btn:hover  { opacity: 0.92; }
+/* Hover: darken filled buttons + add subtle underline as an extra
+   interactivity cue. Underline is rendered with a transparent color
+   off-hover so the transition fades it in smoothly. */
+.btn { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.btn:hover  { filter: brightness(0.92); text-decoration-color: currentColor; }
 .btn:active { transform: scale(0.985); }
 
 .btn-primary { background: var(--orange); color: #fff; font-weight: 700; }
@@ -304,6 +308,10 @@ strong, b { font-weight: 600; }
   color: var(--green);
   border-color: var(--green);
 }
+/* Ghost button hover: fill its border (color shift) in addition to the
+   underline, since brightness change alone is too subtle on a transparent bg. */
+.btn-ghost:hover            { border-color: rgba(242,242,242,0.85); }
+.btn-ghost.btn--on-light:hover { border-color: var(--orange); color: var(--orange); }
 
 
 /* 6. Navigation ======================================================= */
@@ -362,10 +370,13 @@ body:not(.home) .site-nav {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--offwhite);
-  text-decoration: none;
-  transition: opacity 200ms ease;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1.5px;
+  transition: text-decoration-color 200ms ease, opacity 200ms ease;
 }
-.nav-links a:hover { opacity: 0.75; }
+.nav-links a:not(.btn):hover { text-decoration-color: currentColor; }
 .nav-links a.is-active { box-shadow: 0 2px 0 0 var(--orange); }
 .nav-links .btn { padding: 11px 22px; font-size: 11px; }
 
@@ -495,11 +506,8 @@ body:not(.home) .site-nav {
   font-size: var(--sz-display);
   line-height: 1.05;
   opacity: 0;
-  /* Off-screen entrances. Longer durations so motion stays smooth.
-     Delay = slide snaps first, then the quote travels in. */
-  transition:
-    opacity 700ms ease 450ms,
-    transform 1400ms cubic-bezier(0.22, 1, 0.36, 1) 450ms;
+  /* Fade in only — no slide. */
+  transition: opacity 800ms ease 300ms;
 }
 .snap-slide__quote--italic { font-style: italic; font-weight: 900; }
 
@@ -548,20 +556,9 @@ body:not(.home) .site-nav {
   .snap-nav { display: none; }
 }
 
-/* Each quote enters from off-screen in a different direction.
-   Slide 1 drops a full viewport down (from above), 2 from the left
-   edge, 3 from the right edge. */
-.snap-slide:nth-child(1) .snap-slide__quote {
-  transform: translateY(-100vh);
-  transition:
-    opacity 800ms ease 300ms,
-    transform 1500ms cubic-bezier(0.22, 1, 0.36, 1) 300ms;
-}
-.snap-slide:nth-child(2) .snap-slide__quote { transform: translateX(-100vw); }
-.snap-slide:nth-child(3) .snap-slide__quote { transform: translateX(100vw); }
+/* Quotes fade in only — no directional slide. */
 .snap-slide.is-visible .snap-slide__quote {
   opacity: 1;
-  transform: none;
 }
 
 
@@ -583,21 +580,33 @@ body:not(.home) .site-nav {
    Exclude .texture-bg itself — it needs its own absolute positioning. */
 .texture-section > *:not(.texture-bg) { position: relative; z-index: 2; }
 
-/* Cream wash over the texture image, behind content.
-   NOTE: 10% is a light cosmetic tint, NOT a contrast-grade scrim —
-   it does not, on its own, bring text over textures to WCAG AA. */
+/* Cream wash over the texture image, behind content. */
 .texture-section::after {
   content: "";
   position: absolute;
   inset: 0;
   background: var(--offwhite);
-  opacity: 0.10;
+  opacity: 0.20;
   z-index: 1;
   pointer-events: none;
 }
-/* Stronger wash (20%) for sections with body copy sitting directly
+/* Stronger wash for sections with body copy sitting directly
    over the texture — improves legibility on those specific heroes. */
-.texture-section--dim::after { opacity: 0.20; }
+.texture-section--dim::after { opacity: 0.30; }
+
+/* No slide/movement on textured sections — fade in and stay. Override
+   directional reveals and the scale variant for any descendant. The
+   parallax JS is also disabled (see initParallax). */
+.texture-section .reveal-left,
+.texture-section .reveal-right,
+.texture-section .reveal-scale {
+  transform: none;
+}
+.texture-section .reveal-left.is-visible,
+.texture-section .reveal-right.is-visible,
+.texture-section .reveal-scale.is-visible {
+  transform: none;
+}
 
 /* Default text color over textures — set on the section so children inherit.
    Specific color helpers (.c-orange, .c-teal, etc.) on any descendant still
@@ -633,15 +642,14 @@ body:not(.home) .site-nav {
 
 /* 10. Animation utilities ============================================= */
 
-/* Scroll reveal — directional variants */
+/* Scroll reveal — directional variants.
+   Paragraph/body text fades in only (no translate) — easier on the eye.
+   Headings still keep directional motion via .reveal-left/-right/-scale. */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition:
-    opacity 700ms ease,
-    transform 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 700ms ease;
 }
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.reveal.is-visible { opacity: 1; }
 
 .reveal-left,
 .reveal-right,
@@ -651,13 +659,22 @@ body:not(.home) .site-nav {
     opacity 700ms ease,
     transform 850ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.reveal-left   { transform: translateX(-60px); }
-.reveal-right  { transform: translateX(60px); }
+/* Both directional variants rise from below — the side-to-side slides
+   were too active for paragraph reading and inconsistent with the rest
+   of the entrances on the site. */
+.reveal-left   { transform: translateY(40px); }
+.reveal-right  { transform: translateY(40px); }
 .reveal-scale  { transform: scale(0.86); }
 .reveal-left.is-visible,
 .reveal-right.is-visible,
 .reveal-scale.is-visible {
   opacity: 1;
+  transform: none;
+}
+
+/* Paragraph/body text fades in only — no rise or scale. */
+p.reveal-left, p.reveal-right, p.reveal-scale,
+.t-body.reveal-left, .t-body.reveal-right, .t-body.reveal-scale {
   transform: none;
 }
 
@@ -698,18 +715,14 @@ body:not(.home) .site-nav {
   .hero-rise { animation: none; opacity: 1; }
 }
 
-/* Strong-emphasis reveal — bigger scale gap, longer travel,
-   slower curve. For statement moments like the orange testimonial. */
+/* Strong-emphasis reveal — testimonials and statement moments fade in
+   only (no scale/grow). Just a slower opacity curve for weight. */
 .reveal-emphasis {
   opacity: 0;
-  transform: scale(0.55) translateY(50px);
-  transition:
-    opacity 1100ms ease,
-    transform 1500ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 1100ms ease;
 }
 .reveal-emphasis.is-visible {
   opacity: 1;
-  transform: none;
 }
 
 .reveal-stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 600ms ease, transform 600ms ease; }
@@ -736,9 +749,23 @@ body:not(.home) .site-nav {
   padding: 0 6px;
   display: inline;
 }
-/* Pink variant for highlights placed over textures, etc. */
+/* Pink variant for highlights placed over textures. Rendered fully
+   filled on load (no scroll-driven sweep) so the emphasis is locked in
+   the moment the paragraph is in view. */
 .highlight-reveal--pink {
   background-image: linear-gradient(var(--pink), var(--pink));
+  background-size: 100% 105%;
+}
+
+/* Static, non-animated orange highlight. Use as inline span around
+   the phrase to emphasize. */
+.highlight-static {
+  background: var(--orange);
+  color: #fff;
+  padding: 0 6px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  display: inline;
 }
 .highlight-reveal--teal {
   background-image: linear-gradient(var(--teal), var(--teal));
@@ -905,9 +932,11 @@ body:not(.home) .site-nav {
 .star-list--anim li:nth-child(5)::before { animation-delay: 2s; }
 .star-list--anim li:nth-child(6)::before { animation-delay: 2.5s; }
 .star-list--anim li:nth-child(7)::before { animation-delay: 3s; }
+/* Movement dialed down to ~30% of the original (per Retreats Sec 2 feedback).
+   Bullets read as gently breathing instead of twirling. */
 @keyframes star-bullet-pulse {
-  0%, 100% { transform: scale(1)    rotate(0deg);   opacity: 0.85; }
-  50%      { transform: scale(1.15) rotate(180deg); opacity: 1; }
+  0%, 100% { transform: scale(1)     rotate(0deg);  opacity: 0.85; }
+  50%      { transform: scale(1.045) rotate(54deg); opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .star-list--anim li::before { animation: none; opacity: 1; }
@@ -1108,6 +1137,18 @@ body:not(.home) .site-nav {
   -webkit-overflow-scrolling: touch;
   align-items: stretch;
 }
+/* Two-card gallery: center the pair, widen cards, and let them wrap
+   to one-per-row on narrow viewports without horizontal scroll. */
+.retreat-gallery--two {
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+.retreat-gallery--two .retreat-card {
+  flex: 0 1 420px;
+  width: 420px;
+  max-width: 420px;
+}
 .retreat-card {
   background: #fff;
   border: 1px solid rgba(55,44,28,0.12);
@@ -1157,10 +1198,9 @@ body:not(.home) .site-nav {
   font-weight: 300;
   font-size: 15px;
   line-height: 1.55;
-  height: 18em;            /* fixed — every card's window is identical; sized so July fits with no scroll */
-  overflow-y: auto;
-  padding-right: 10px;
-  /* Scrollbar styling inherited from the universal rust rule. */
+  /* Cards grow to fit their theme copy — no internal scroll. CTA
+     alignment comes from flex-stretch on the card + margin-top:auto
+     on the .btn. */
 }
 .retreat-card h3 { font-size: 20px; }
 .retreat-card .btn { align-self: flex-start; margin-top: auto; }
@@ -1373,10 +1413,13 @@ body:not(.home) .site-nav {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--sand);
-  text-decoration: none;
-  transition: color 200ms ease;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1.5px;
+  transition: color 200ms ease, text-decoration-color 200ms ease;
 }
-.footer-nav a:hover { color: var(--orange); }
+.footer-nav a:hover { color: var(--orange); text-decoration-color: currentColor; }
 /* Land acknowledgment — visual weight sits between the footer nav
    (full sand, 500) and the disclaimer (55% sand, 300). */
 .footer-land {
@@ -1543,10 +1586,14 @@ body:not(.home) .site-nav {
   border-radius: var(--btn-radius);
   padding: 14px 32px;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.1s ease;
   white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+  transition: filter 0.2s ease, transform 0.1s ease, text-decoration-color 0.2s ease, border-color 0.2s ease;
 }
-.bc-btn:hover  { opacity: 0.88; }
+.bc-btn:hover  { filter: brightness(0.92); text-decoration-color: currentColor; }
 .bc-btn:active { transform: scale(0.98); }
 .bc-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .bc-btn--primary { background: var(--orange); color: #fff; }
@@ -1641,23 +1688,36 @@ body:not(.home) .site-nav {
   .founder-letter   { max-height: 60vh; padding-right: 0.5rem; }
   .specialist    { grid-template-columns: 1fr; text-align: center; }
   .specialist-headshot { margin: 0 auto; width: 140px; height: 140px; }
+  /* Match Libby's bio paragraphs to Lindsay's letter scale on mobile
+     so the two greetings read at the same size. */
+  .specialist .t-body {
+    font-size: 16px;
+    line-height: 1.9;
+  }
   .two-col       { grid-template-columns: 1fr; }
   .schedule-row  { grid-template-columns: 110px 1fr; gap: 1rem; }
 }
 
 @media (max-width: 768px) {
-  .nav-toggle { display: block; }
+  .nav-toggle { display: block; position: relative; z-index: 1001; }
+  /* Keep the site logo visible above the open drawer so it acts as
+     the "logo at top of menu" anchored to the viewport. */
+  .site-nav .nav-logo { position: relative; z-index: 1001; }
   .nav-links {
     position: fixed;
     inset: 0;
     background: var(--green);
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    gap: 2rem;
+    gap: 1.75rem;
+    /* Top padding clears the persistent nav header (logo + close X)
+       so menu items begin just below them. */
+    padding: clamp(96px, 16vh, 140px) 1.5rem 2rem;
     transform: translateY(-100%);
     transition: transform 350ms ease;
     z-index: 999;
+    overflow-y: auto;
   }
   .nav-links.is-open { transform: translateY(0); }
   .nav-links a { font-size: 18px; }
@@ -1672,6 +1732,23 @@ body:not(.home) .site-nav {
 @media (max-width: 480px) {
   .hero-intro__logo { width: 220px; }
   .snap-slide__quote { font-size: clamp(40px, 11vw, 60px); }
+}
+
+/* Hero sections on mobile: keep content above the fold. Several page
+   heroes anchor content to the bottom of a 100vh section on desktop
+   ("justify-content: flex-end"), which pushes the H1 below the fold
+   on phones. Shorten the section and re-center on mobile so the hero
+   copy is fully visible without scrolling. Uses `svh` (small viewport
+   height) so dynamic mobile chrome doesn't crop it. */
+@media (max-width: 768px) {
+  section[style*="100vh"][style*="flex-end"],
+  section[style*="100vh"][style*="flex-start"],
+  section[style*="100vh"][style*="center"] {
+    min-height: 78svh !important;
+    justify-content: center !important;
+    padding-top: clamp(100px, 14vh, 140px) !important;
+    padding-bottom: clamp(32px, 6vh, 64px) !important;
+  }
 }
 
 /* Touch targets */

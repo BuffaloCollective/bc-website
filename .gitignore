@@ -4,3 +4,6 @@ content.md
 
 # Local backup of uncompressed source textures — not used by the site.
 assets/images/textures-original/
+
+# Local Claude Code preview tooling — not used by the site.
+.claude/
