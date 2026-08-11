@@ -13,3 +13,17 @@
   to = "/membership"
   status = 301
   force = true
+
+# Retreats page retired — redirect old URLs to /membership so partner links
+# and search results don't 404.
+[[redirects]]
+  from = "/retreats"
+  to = "/membership"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/retreats.html"
+  to = "/membership"
+  status = 301
+  force = true

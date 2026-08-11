@@ -7,3 +7,6 @@ assets/images/textures-original/
 
 # Local Claude Code preview tooling — not used by the site.
 .claude/
+
+# Retired pages kept on disk for easy restore — not part of the live site.
+Archived Content/
