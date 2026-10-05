@@ -126,6 +126,16 @@ strong, b { font-weight: 600; }
   border: 0;
 }
 
+/* Form honeypot — pushed off-screen (not display:none, which some bots
+   detect and skip) so only bots fill it in. */
+.bc-hp {
+  position: absolute !important;
+  left: -10000px;
+  top: auto;
+  width: 1px; height: 1px;
+  overflow: hidden;
+}
+
 /* Skip-to-content link — off-screen until keyboard-focused. */
 .skip-link {
   position: fixed;
@@ -1575,6 +1585,10 @@ p.reveal-left, p.reveal-right, p.reveal-scale,
 .bc-form--light .bc-checkbox-custom { border-color: rgba(55, 44, 28, 0.4); }
 
 .bc-form-footer { display: flex; align-items: center; }
+
+/* Turnstile widget slot — line up with the submit button (the footer
+   form otherwise inherits text-align: center). */
+[data-turnstile] { text-align: left; }
 
 .bc-btn {
   font-family: var(--form-font);

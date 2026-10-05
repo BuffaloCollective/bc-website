@@ -1,28 +1,16 @@
 // netlify/functions/subscribe.js
 // Adds a contact to Brevo Herd Mentality list (#8)
 
+const { guard } = require("../lib/bot-guard");
+
 exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
+  // Honeypot, validation and Turnstile all run before any Brevo call.
+  const checked = await guard(event, "subscribe", { firstName: 100, email: 254 });
+  if (checked.response) return checked.response;
 
-  let body;
-  try {
-    body = JSON.parse(event.body);
-  } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
-  }
+  const { firstName, email, source } = checked.body;
 
-  const { firstName, email, source } = body;
-
-  if (!firstName || !email) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "First name and email are required." }),
-    };
-  }
-
-  const attributes = { FIRSTNAME: firstName };
+  const attributes = { FIRSTNAME: firstName.trim() };
   // Optional: utm_source captured client-side, stored as SOURCE on the
   // Brevo contact. Only set if non-empty and reasonable length.
   if (typeof source === "string" && source.trim() && source.length <= 100) {
@@ -30,7 +18,7 @@ exports.handler = async (event) => {
   }
 
   const payload = {
-    email,
+    email: email.trim(),
     attributes,
     listIds: [8],
     updateEnabled: true,

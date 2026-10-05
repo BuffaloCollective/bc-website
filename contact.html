@@ -139,6 +139,13 @@
               </label>
             </div>
 
+            <div class="bc-hp" aria-hidden="true">
+              <label for="ct-website">Website</label>
+              <input type="text" id="ct-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            </div>
+
+            <div data-turnstile data-theme="light"></div>
+
             <div class="bc-form-footer">
               <button class="bc-btn bc-btn--primary" type="submit">Send it</button>
             </div>
@@ -164,8 +171,6 @@
           form.addEventListener("submit", async function (e) {
             e.preventDefault();
             const btn = form.querySelector("button[type=submit]");
-            btn.disabled = true;
-            btn.textContent = "Sending…";
             successMsg.hidden = true;
             errorMsg.hidden = true;
             const data = {
@@ -176,7 +181,16 @@
               message: form.message.value.trim(),
               source: form.source.value,
               subscribeNewsletter: form.subscribeNewsletter.checked,
+              website: form.website.value,
+              "cf-turnstile-response": window.bcTurnstile ? window.bcTurnstile.token(form) : "",
             };
+            if (!data["cf-turnstile-response"]) {
+              errorMsg.textContent = "One moment — we're still checking you're human. Please try again in a few seconds.";
+              errorMsg.hidden = false;
+              return;
+            }
+            btn.disabled = true;
+            btn.textContent = "Sending…";
             try {
               const res = await fetch("/.netlify/functions/contact", {
                 method: "POST",
@@ -200,6 +214,8 @@
               btn.disabled = false;
               btn.textContent = "Send it";
             }
+            // Turnstile tokens are single-use; get a fresh one for any retry.
+            if (window.bcTurnstile) window.bcTurnstile.reset(form);
           });
         })();
       </script>
@@ -231,6 +247,13 @@
             </div>
           </div>
 
+          <div class="bc-hp" aria-hidden="true">
+            <label for="nl-website">Website</label>
+            <input type="text" id="nl-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          </div>
+
+          <div data-turnstile data-theme="dark"></div>
+
           <div class="bc-form-footer">
             <button class="bc-btn bc-btn--primary" type="submit">Subscribe to Herd Mentality</button>
           </div>
@@ -250,14 +273,21 @@
           form.addEventListener("submit", async function (e) {
             e.preventDefault();
             const btn = form.querySelector("button[type=submit]");
-            btn.disabled = true;
-            btn.textContent = "Sending…";
             successMsg.hidden = true;
             errorMsg.hidden = true;
             const data = {
               firstName: form.firstName.value.trim(),
               email: form.email.value.trim(),
+              website: form.website.value,
+              "cf-turnstile-response": window.bcTurnstile ? window.bcTurnstile.token(form) : "",
             };
+            if (!data["cf-turnstile-response"]) {
+              errorMsg.textContent = "One moment — we're still checking you're human. Please try again in a few seconds.";
+              errorMsg.hidden = false;
+              return;
+            }
+            btn.disabled = true;
+            btn.textContent = "Sending…";
             try {
               const utmSource = sessionStorage.getItem("bc_utm_source");
               if (utmSource) data.source = utmSource;
@@ -285,6 +315,8 @@
               btn.disabled = false;
               btn.textContent = "Subscribe to Herd Mentality";
             }
+            // Turnstile tokens are single-use; get a fresh one for any retry.
+            if (window.bcTurnstile) window.bcTurnstile.reset(form);
           });
         })();
       </script>

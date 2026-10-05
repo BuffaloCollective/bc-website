@@ -10,7 +10,12 @@
      6. Team grid star positioning + animation offsets
      7. Ticker DOM duplication (seamless loop)
      8. Home: logo intro sequence
+     9. Cloudflare Turnstile on forms
    ===================================================================== */
+
+/* Cloudflare Turnstile site key (public). Paste it here — this is the only
+   place it lives; every form's widget reads it. */
+var TURNSTILE_SITE_KEY = "0x4AAAAAAFOxUqxOfbuy66q8";
 
 (function () {
   "use strict";
@@ -636,8 +641,51 @@
     }
   }
 
+  /* ── 9. Cloudflare Turnstile ──────────────────────────────────── */
+  /*  Loads the Turnstile script once and renders a widget into every
+      [data-turnstile] slot, themed by the slot's data-theme. The inline
+      form handlers call window.bcTurnstile.token(form) on submit and
+      .reset(form) afterwards (tokens are single-use). */
+  const turnstileWidgets = new Map(); // form -> widget id
+
+  window.bcTurnstile = {
+    token(form) {
+      const id = turnstileWidgets.get(form);
+      return id !== undefined && window.turnstile
+        ? window.turnstile.getResponse(id) || ""
+        : "";
+    },
+    reset(form) {
+      const id = turnstileWidgets.get(form);
+      if (id !== undefined && window.turnstile) window.turnstile.reset(id);
+    },
+  };
+
+  function initTurnstile() {
+    const slots = document.querySelectorAll("[data-turnstile]");
+    if (!slots.length) return;
+
+    window.bcTurnstileReady = function () {
+      slots.forEach((slot) => {
+        const id = window.turnstile.render(slot, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme: slot.dataset.theme || "auto",
+        });
+        turnstileWidgets.set(slot.closest("form"), id);
+      });
+    };
+
+    const s = document.createElement("script");
+    s.src =
+      "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=bcTurnstileReady";
+    s.async = true;
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
   function init() {
     initUtmCapture();
+    initTurnstile();
     initReadingIndicator();
     initNav();
     initReveals();

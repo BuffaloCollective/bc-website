@@ -2,26 +2,32 @@
 // Routes contact form submissions to herd@buffalocollective.co via Brevo transactional email
 // Optionally adds contact to Herd Mentality list (#8) and always adds to Website Contact list (#12)
 
+const { guard } = require("../lib/bot-guard");
+
+// Visitor input is interpolated into the notification email's HTML.
+const escapeHtml = (s) =>
+  String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
 exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
+  // Honeypot, validation and Turnstile all run before any Brevo call.
+  const checked = await guard(event, "contact", {
+    firstName: 100,
+    lastName: 100,
+    email: 254,
+    inquiryType: 100,
+    message: 5000,
+    source: 100,
+  });
+  if (checked.response) return checked.response;
 
-  let body;
-  try {
-    body = JSON.parse(event.body);
-  } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
-  }
-
-  const { firstName, lastName, email, inquiryType, message, source, subscribeNewsletter } = body;
-
-  if (!firstName || !lastName || !email || !inquiryType || !message || !source) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "All fields are required." }),
-    };
-  }
+  const { firstName, lastName, email, inquiryType, message, source } = checked.body;
+  const subscribeNewsletter = checked.body.subscribeNewsletter === true;
+  const h = {
+    name: escapeHtml(`${firstName} ${lastName}`),
+    email: escapeHtml(email),
+    inquiryType: escapeHtml(inquiryType),
+    message: escapeHtml(message),
+  };
 
   const apiKey = process.env.BREVO_API_KEY;
 
@@ -37,15 +43,15 @@ exports.handler = async (event) => {
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px 0; font-weight: bold; width: 140px;">Name</td>
-            <td style="padding: 8px 0;">${firstName} ${lastName}</td>
+            <td style="padding: 8px 0;">${h.name}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; font-weight: bold;">Email</td>
-            <td style="padding: 8px 0;"><a href="mailto:${email}">${email}</a></td>
+            <td style="padding: 8px 0;"><a href="mailto:${h.email}">${h.email}</a></td>
           </tr>
           <tr>
             <td style="padding: 8px 0; font-weight: bold;">Inquiry type</td>
-            <td style="padding: 8px 0;">${inquiryType}</td>
+            <td style="padding: 8px 0;">${h.inquiryType}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; font-weight: bold;">Newsletter opt-in</td>
@@ -54,7 +60,7 @@ exports.handler = async (event) => {
         </table>
         <hr style="border: 1px solid #e2d5b3; margin: 16px 0;" />
         <h3 style="color: #16462b;">Message</h3>
-        <p style="white-space: pre-wrap;">${message}</p>
+        <p style="white-space: pre-wrap;">${h.message}</p>
       </div>
     `,
   };
