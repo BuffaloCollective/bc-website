@@ -1,7 +1,11 @@
 // netlify/functions/subscribe.js
-// Adds a contact to Brevo Herd Mentality list (#8)
+// Starts Brevo double opt-in for the Herd Mentality list (#8). Brevo emails a
+// confirmation link; the contact only joins list #8 once they click it, then
+// lands on /confirmed.
 
 const { guard } = require("../lib/bot-guard");
+
+const REDIRECT_URL = "https://buffalocollective.co/confirmed";
 
 exports.handler = async (event) => {
   // Honeypot, validation and Turnstile all run before any Brevo call.
@@ -17,15 +21,25 @@ exports.handler = async (event) => {
     attributes.SOURCE = source.trim();
   }
 
+  const templateId = parseInt(process.env.BREVO_DOI_TEMPLATE_ID, 10);
+  if (!templateId) {
+    console.error("BREVO_DOI_TEMPLATE_ID is not set");
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Server error. Please try again." }),
+    };
+  }
+
   const payload = {
     email: email.trim(),
     attributes,
-    listIds: [8],
-    updateEnabled: true,
+    includeListIds: [8],
+    templateId,
+    redirectionUrl: REDIRECT_URL,
   };
 
   try {
-    const response = await fetch("https://api.brevo.com/v3/contacts", {
+    const response = await fetch("https://api.brevo.com/v3/contacts/doubleOptinConfirmation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +48,10 @@ exports.handler = async (event) => {
       body: JSON.stringify(payload),
     });
 
-    // 201 = created, 204 = already exists and updated
+    // 201 = new contact, confirmation email sent; 204 = existing contact
+    // updated. The browser shows one neutral "check your inbox" message for
+    // both (and for already-subscribed addresses below), so the form can't be
+    // used to find out whether someone is on the list.
     if (response.status === 201 || response.status === 204) {
       return {
         statusCode: 200,
@@ -42,14 +59,22 @@ exports.handler = async (event) => {
       };
     }
 
-    const errorData = await response.json();
-    console.error("Brevo API error:", errorData);
+    const errorData = await response.json().catch(() => ({}));
+    if (errorData.code === "duplicate_parameter") {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ success: true }),
+      };
+    }
+
+    // Status and error code only: Brevo error messages can echo the address.
+    console.error("Brevo API error:", response.status, errorData.code || "unknown");
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to subscribe. Please try again." }),
     };
   } catch (err) {
-    console.error("Function error:", err);
+    console.error("Function error:", err.message);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Server error. Please try again." }),
