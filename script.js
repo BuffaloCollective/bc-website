@@ -670,6 +670,9 @@ var TURNSTILE_SITE_KEY = "0x4AAAAAAFOxUqxOfbuy66q8";
         const id = window.turnstile.render(slot, {
           sitekey: TURNSTILE_SITE_KEY,
           theme: slot.dataset.theme || "auto",
+          // The normal widget is a fixed 300px; on the narrowest phones
+          // fall back to the compact square so the page can't scroll sideways.
+          size: slot.offsetWidth < 300 ? "compact" : "normal",
         });
         turnstileWidgets.set(slot.closest("form"), id);
       });
