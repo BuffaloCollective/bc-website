@@ -1,8 +1,10 @@
 // netlify/functions/contact.js
 // Routes contact form submissions to herd@buffalocollective.co via Brevo transactional email
-// Optionally adds contact to Herd Mentality list (#8) and always adds to Website Contact list (#12)
+// Always adds the contact to Website Contact list (#12); newsletter opt-ins get
+// a double opt-in email and join Herd Mentality (#8) only after confirming.
 
 const { guard } = require("../lib/bot-guard");
+const { startDoubleOptIn } = require("../lib/brevo-doi");
 
 // Visitor input is interpolated into the notification email's HTML.
 const escapeHtml = (s) =>
@@ -76,25 +78,34 @@ exports.handler = async (event) => {
     });
 
     if (!emailRes.ok) {
-      const err = await emailRes.json();
-      console.error("Email send error:", err);
+      const err = await emailRes.json().catch(() => ({}));
+      console.error("Email send error:", emailRes.status, err.code || "unknown");
       return {
         statusCode: 500,
         body: JSON.stringify({ error: "Failed to send message. Please try again." }),
       };
     }
   } catch (err) {
-    console.error("Email function error:", err);
+    console.error("Email function error:", err.message);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Server error. Please try again." }),
     };
   }
 
-  // 2. Add contact to Brevo — list #12 always, list #8 if newsletter opt-in
-  const listIds = [12];
-  if (subscribeNewsletter) listIds.push(8);
+  // 2. Newsletter opt-in goes through double opt-in, same as the footer form:
+  //    they join list #8 only after clicking the confirmation link. Runs
+  //    before the list #12 step so Brevo sees a new contact where possible.
+  if (subscribeNewsletter) {
+    try {
+      await startDoubleOptIn(email, { FIRSTNAME: firstName, LASTNAME: lastName });
+    } catch (err) {
+      // Log but don't fail — the message itself was already sent
+      console.error("DOI function error:", err.message);
+    }
+  }
 
+  // 3. Add contact to the Website Contact list (#12)
   const contactPayload = {
     email,
     attributes: {
@@ -103,7 +114,7 @@ exports.handler = async (event) => {
       INQUIRY_TYPE: inquiryType,
       SOURCE: source,
     },
-    listIds,
+    listIds: [12],
     updateEnabled: true,
   };
 
@@ -118,12 +129,13 @@ exports.handler = async (event) => {
     });
 
     if (!contactRes.ok && contactRes.status !== 204) {
-      const err = await contactRes.json();
-      // Log but don't fail — email already sent successfully
-      console.error("Contact creation error:", err);
+      const err = await contactRes.json().catch(() => ({}));
+      // Log but don't fail — email already sent successfully. Status and
+      // error code only: Brevo error messages can echo the address.
+      console.error("Contact creation error:", contactRes.status, err.code || "unknown");
     }
   } catch (err) {
-    console.error("Contact function error:", err);
+    console.error("Contact function error:", err.message);
     // Same — log but don't fail
   }
 
